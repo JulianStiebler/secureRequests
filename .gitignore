@@ -1,0 +1,7 @@
+
+/.sr
+/build
+/dist
+cacert.pem
+*.pyc
+unitTest/unitTest.log
