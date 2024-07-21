@@ -332,7 +332,7 @@ class SecureRequests:
         >>> self._certificateFetch()
         INFO:root:Successfully fetched certificate and saved.
         """
-        if os.path.exists(self.certificatePath):
+        if self.os.path.exists(self.certificatePath):
             self.verify = self.certificatePath
             if not force:
                 return
@@ -386,7 +386,7 @@ class SecureRequests:
         self,
         url: str,
         method: str = "GET",
-        payload: Optional[Dict[str, Any]] = None,
+        data: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
     ) -> requests.Response:
         """
@@ -463,11 +463,10 @@ class SecureRequests:
             raise ValueError(f"Unsupported HTTP method: {method}")
 
         headers = headers or self.headers
-
         response = srMethods[method](
-            url, json=payload, headers=headers, verify=self.verify
+            url, data=data, headers=headers, verify=self.verify
         )
-        self._logRequest(method, url, response=response, json=payload, headers=headers)
+        self._logRequest(method, url, response=response, data=data, headers=headers)
         return response
 
     def _logRequest(self, method: str, url: str, response: requests.Response, **kwargs: Any) -> None:
@@ -496,7 +495,7 @@ class SecureRequests:
         INFO:root:GET request to https://example.com/api/data with headers {'Authorization': 'Bearer token'} and params {'headers': {'Authorization': 'Bearer token'}, 'params': {'key': 'value'}} with Status Code 200
         """
         if hasattr(self, "logger"):
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = self.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             safetyStatus = "[UNSAFE]" if self.unsafe else "[SAFE]"
             tlsStatus = "[TLS]" if self.useTLS else "[NO TLS]"
             logExtra = f' with headers {kwargs.get("headers")} and params {kwargs}' if self.logExtensive else ''
