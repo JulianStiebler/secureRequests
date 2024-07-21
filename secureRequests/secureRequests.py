@@ -65,7 +65,8 @@ SOFTWARE.
 """
 
 import requests
-import os
+from os.path import exists as PathExists
+from os.path import join as PathJoin
 import ssl
 import warnings
 import logging
@@ -176,8 +177,10 @@ class SecureRequests:
     ----------
     requests : module, optional
         The `requests` module to use for making HTTP requests. Defaults to the `requests` module.
-    os : module, optional
-        The `os` module to use for file operations. Defaults to the `os` module.
+    osPathJoin : module, optional
+        The `os.path.join` module to use for file operations. Defaults to the `os.path.join` module.
+    osPathExists : module, optional
+        The `os.path.exists` module to use for file operations. Defaults to the `os.path.exists` module.
     useEnv : bool, optional
         Whether to use environment variables for configuration. Defaults to `False`.
     customEnvVars : dict, optional
@@ -243,7 +246,8 @@ class SecureRequests:
     def __init__(
             self,
             requests: requests = requests,
-            os: os = os,
+            pathExists: PathExists = PathExists,
+            pathJoin: PathJoin = PathJoin,
             datetime: datetime = datetime,
             useEnv: bool = False,
             customEnvVars: Optional[Dict[str, str]] = None,
@@ -262,13 +266,14 @@ class SecureRequests:
             session: requests.Session = None) -> None:
         
         # ------------------------------------------------- Initialize Modules -------------------------------------------------
-        self.os = os
+        self.pathJoin = pathJoin
+        self.pathExists = pathExists
         self.requests = requests
-        self.datetime = datetime
+        self.datetime = datetime 
 
         # ---------------------------------------- Initialize Security Related Variables ----------------------------------------
-        self.unsafe = unsafe if unsafe is not None else config.getUnsafe()
         self.verify = False
+        self.unsafe = unsafe if unsafe is not None else config.getUnsafe()
         self.useTLS = useTLS if useTLS is not None else config.getUseTLS()
         self.session = session if session else self.requests.session()
         if self.useTLS and not self.unsafe:
@@ -332,7 +337,7 @@ class SecureRequests:
         >>> self._certificateFetch()
         INFO:root:Successfully fetched certificate and saved.
         """
-        if self.os.path.exists(self.certificatePath):
+        if self.pathExists(self.certificatePath):
             self.verify = self.certificatePath
             if not force:
                 return
@@ -373,7 +378,7 @@ class SecureRequests:
         """
         return (
             self.certificatePath
-            if not self.unsafe and self.os.path.exists(self.certificatePath)
+            if not self.unsafe and self.pathExists(self.certificatePath)
             else False
         )
 

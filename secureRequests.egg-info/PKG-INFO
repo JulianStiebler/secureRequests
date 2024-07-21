@@ -44,7 +44,7 @@ A simple library designed to make secure HTTP requests more widespread with flex
 
 # General Information
 
-> Depends only on `requests`, `os`, `datetime`.
+> Depends only on `requests`, `os.path.exists`, `os.path.join` and `datetime` (for header & cookie values).
 
 ## Example
 
