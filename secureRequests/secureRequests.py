@@ -391,7 +391,7 @@ class SecureRequests:
         self,
         url: str,
         method: str = "GET",
-        data: Optional[Dict[str, Any]] = None,
+        payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
     ) -> requests.Response:
         """
@@ -469,9 +469,9 @@ class SecureRequests:
 
         headers = headers or self.headers
         response = srMethods[method](
-            url, data=data, headers=headers, verify=self.verify
+            url, data=payload, headers=headers, verify=self.verify
         )
-        self._logRequest(method, url, response=response, data=data, headers=headers)
+        self._logRequest(method, url, response=response, data=payload, headers=headers)
         return response
 
     def _logRequest(self, method: str, url: str, response: requests.Response, **kwargs: Any) -> None:
