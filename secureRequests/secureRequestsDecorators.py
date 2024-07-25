@@ -18,26 +18,67 @@ Example
     "key": "value"
 }
 
-MIT License
------------
-Copyright (c) 2024 Julian Stiebler
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Functions
+---------
+handleResponse: Decorator to handle HTTP responses and raise custom exceptions based on the response status code.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+    Parameters
+    ----------
+    func : Callable[..., requests.Response]
+        The function making an HTTP request that returns a `requests.Response` object.
+
+    Returns
+    -------
+    Callable[..., requests.Response]
+        A wrapped function that raises custom exceptions based on the status code of the response.
+
+    Raises
+    ------
+    BadRequestException
+        If the response status code is 400.
+    UnauthorizedException
+        If the response status code is 401.
+    ForbiddenException
+        If the response status code is 403.
+    NotFoundException
+        If the response status code is 404.
+    MethodNotAllowedException
+        If the response status code is 405.
+    NotAcceptableException
+        If the response status code is 406.
+    ProxyAuthenticationRequiredException
+        If the response status code is 407.
+    RequestTimeoutException
+        If the response status code is 408.
+    PayloadTooLargeException
+        If the response status code is 413.
+    TooManyRequestsException
+        If the response status code is 429.
+    InternalServerErrorException
+        If the response status code is 500.
+    BadGatewayException
+        If the response status code is 502.
+    ServiceUnavailableException
+        If the response status code is 503.
+    GatewayTimeoutException
+        If the response status code is 504.
+    UnknownErrorException
+        If the response status code is 520.
+    WebServerDownException
+        If the response status code is 521.
+    ConnectionTimedOutException
+        If the response status code is 522.
+    OriginUnreachableException
+        If the response status code is 523.
+    TimeoutOccurredException
+        If the response status code is 524.
+
+# Author: Julian Stiebler
+# GitHub Repository: https://github.com/JulianStiebler/secureRequests
+# GitHub Issues: https://github.com/JulianStiebler/secureRequests/issues
+# GitHub Wiki: https://github.com/JulianStiebler/secureRequests/wiki
+
 # Created: 15.07.2024
 # Last edited: 17.07.2024
 """
@@ -114,46 +155,9 @@ def handleResponse(func):
 
     Raises
     ------
-    BadRequestException
-        If the response status code is 400.
-    UnauthorizedException
-        If the response status code is 401.
-    ForbiddenException
-        If the response status code is 403.
-    NotFoundException
-        If the response status code is 404.
-    MethodNotAllowedException
-        If the response status code is 405.
-    NotAcceptableException
-        If the response status code is 406.
-    ProxyAuthenticationRequiredException
-        If the response status code is 407.
-    RequestTimeoutException
-        If the response status code is 408.
-    PayloadTooLargeException
-        If the response status code is 413.
-    TooManyRequestsException
-        If the response status code is 429.
-    InternalServerErrorException
-        If the response status code is 500.
-    BadGatewayException
-        If the response status code is 502.
-    ServiceUnavailableException
-        If the response status code is 503.
-    GatewayTimeoutException
-        If the response status code is 504.
-    UnknownErrorException
-        If the response status code is 520.
-    WebServerDownException
-        If the response status code is 521.
-    ConnectionTimedOutException
-        If the response status code is 522.
-    OriginUnreachableException
-        If the response status code is 523.
-    TimeoutOccurredException
-        If the response status code is 524.
+    Any Given Exception for secureRequestsExceptions
 
-    Example
+        Example
     -------
     >>> @handleResponse
     ... def get_data(url: str) -> requests.Response:
@@ -171,8 +175,29 @@ def handleResponse(func):
         "key": "value"
     }
     """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
+        """
+        Inner function that wraps the original function to handle HTTP responses.
+
+        Parameters
+        ----------
+        *args : tuple
+            Positional arguments passed to the wrapped function.
+        **kwargs : dict
+            Keyword arguments passed to the wrapped function.
+
+        Returns
+        -------
+        requests.Response
+            The original HTTP response, if no exceptions are raised.
+
+        Raises
+        ------
+        Exception
+            Raises a custom exception based on the HTTP response status code.
+        """
         response = func(*args, **kwargs)
         exception = STATUS_CODE_EXCEPTION_MAP.get(response.status_code)
         if exception:

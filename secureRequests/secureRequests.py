@@ -1,64 +1,73 @@
 """
-    This module provides utilities for making secure HTTP requests using the `requests` library.
-    It includes custom transport adapters, certificate management, and header/cookie handling with enums.
+This module provides utilities for making secure HTTP requests using the `requests` library.
+It includes custom transport adapters, certificate management, and header/cookie handling with enums.
 
-    Classes
-    -------
-        TLSAdapter: A custom Transport Adapter for using a specified SSL context with requests.
-        SecureRequests: Provides methods to make HTTP requests with enhanced security features, including
-                        SSL/TLS configuration, certificate management, and custom headers and cookies.
+Classes:
+TLSAdapter: A custom Transport Adapter for using a specified SSL context with requests.
+    Methods:
+        - __init__: Initializes the TLSAdapter with an optional SSL context.
+        - initPoolmanager: Initializes the pool manager with the SSL context.
+        - _createSSLContext: Creates and returns a default SSL context.
 
-    Usage Examples
-    --------------
-    >>> from secure_requests import SecureRequests
-    >>> print(headers)
+SecureRequests: Provides methods to make HTTP requests with enhanced security features, including
+                SSL/TTLS configuration, certificate management, and custom headers and cookies.
+    Methods:
+        - __init__: Initializes the SecureRequests instance with various configuration options.
+        - _certificateFetch: Fetches the SSL certificate if required.
+        - _certificateSet: Sets the SSL certificate for the session.
+        - makeRequest: Makes an HTTP request with the given method, URL, and optional payload and headers.
+        - _logRequest: Logs the details of the HTTP request and response.
+        - headerGenerate: Generates a dictionary of default headers for HTTP requests.
+        - headerSetKey: Sets a specific header key to a given value.
+        - headerRemoveKey: Removes a specific header key.
+        - headerUpdateMultiple: Updates multiple header keys with the provided values.
+        - headerRemoveMultiple: Removes multiple header keys.
+        - _serializeCookieInfo: Serializes cookie information into a string.
+        - _deserializeCookieInfo: Deserializes a cookie information string back into a dictionary.
+        - cookieUpdate: Updates a specific cookie with the provided information.
+        - cookieGet: Retrieves the information for a specific cookie.
+        - cookieRemove: Removes a specific cookie.
+        - cookieUpdateMultiple: Updates multiple cookies with the provided information.
+        - cookieGetAll: Retrieves all cookies and their information.
 
-    >>> sr = SecureRequests()
-    >>> headers = sr.headerGenerate(customHeaders={"Content-Type": "application/json"})
-    >>> sr.headerSetKey(HeaderKeys.AUTHORIZATION, "Bearer token123")
-    >>> sr.cookieUpdate(CookieKeys.SESSION_ID, {
-    ...     CookieAttributeKeys.DOMAIN: 'example.com',
-    ...     CookieAttributeKeys.PATH: '/',
-    ...     CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
-    ...     CookieAttributeKeys.SECURE: True
-    ... })
-    >>> response = sr.makeRequest("https://httpbin.org/get")
-    >>> print(response.status_code)
+Functions:
+    headerGenerate: Generates a dictionary of default headers for HTTP requests.
 
-    Returns
-    -------
-    >>>     makeRequest: requests.Response
-    >>>     headerGenerate: Dict[str, str]
-    >>>     headerSetKey: None
-    >>>     headerRemoveKey: None
-    >>>     headerUpdateMultiple: None
-    >>>     headerRemoveMultiple: None
-    >>>     cookieUpdate: None
-    >>>     cookieGet: Optional[Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
-    >>>     cookieRemove: None
-    >>>     cookieUpdateMultiple: None
-    >>>     cookieGetAll: Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
+Usage Examples
+--------------
+>>> from secureRequests import SecureRequests
+>>> print(headers)
 
-MIT License
------------
-Copyright (c) 2024 Julian Stiebler
+>>> sr = SecureRequests()
+>>> headers = sr.headerGenerate(customHeaders={"Content-Type": "application/json"})
+>>> sr.headerSetKey(HeaderKeys.AUTHORIZATION, "Bearer token123")
+>>> sr.cookieUpdate(CookieKeys.SESSION_ID, {
+...     CookieAttributeKeys.DOMAIN: 'example.com',
+...     CookieAttributeKeys.PATH: '/',
+...     CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
+...     CookieAttributeKeys.SECURE: True
+... })
+>>> response = sr.makeRequest("https://httpbin.org/get")
+>>> print(response.status_code)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Returns
+-------
+>>>     makeRequest: requests.Response
+>>>     headerGenerate: Dict[str, str]
+>>>     headerSetKey: None
+>>>     headerRemoveKey: None
+>>>     headerUpdateMultiple: None
+>>>     headerRemoveMultiple: None
+>>>     cookieUpdate: None
+>>>     cookieGet: Optional[Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
+>>>     cookieRemove: None
+>>>     cookieUpdateMultiple: None
+>>>     cookieGetAll: Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+# Author: Julian Stiebler
+# GitHub Repository: https://github.com/JulianStiebler/secureRequests
+# GitHub Issues: https://github.com/JulianStiebler/secureRequests/issues
+# GitHub Wiki: https://github.com/JulianStiebler/secureRequests/wiki
 
 # Created: 15.07.2024
 # Last edited: 17.07.2024
@@ -94,26 +103,6 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
     _createSSLCOntext() -> ssl.SSLContext
         Creates a default SSL context with specific cipher settings.
 
-    Examples
-    --------
-    >>> import ssl
-    >>> from requests import Session
-    >>> from secure_requests import TLSAdapter
-
-    # Create a custom SSL context
-    >>> ssl_context = ssl.create_default_context()
-    >>> ssl_context.set_ciphers("HIGH:!DH:!aNULL")
-
-    # Initialize TLSAdapter with the custom SSL context
-    >>> adapter = TLSAdapter(sslContext=ssl_context)
-
-    # Use the adapter with a requests Session
-    >>> session = Session()
-    >>> session.mount("https://", adapter)
-
-    # Make a secure request
-    >>> response = session.get("https://httpbin.org/get")
-    >>> print(response.status_code)
     """
 
     def __init__(
@@ -173,41 +162,6 @@ class SecureRequests:
     This class provides methods to make HTTP requests with enhanced security features, including
     SSL/TLS configuration, certificate management, and custom headers and cookies powered with enums.
 
-    Parameters
-    ----------
-    requests : module, optional
-        The `requests` module to use for making HTTP requests. Defaults to the `requests` module.
-    osPathJoin : module, optional
-        The `os.path.join` module to use for file operations. Defaults to the `os.path.join` module.
-    osPathExists : module, optional
-        The `os.path.exists` module to use for file operations. Defaults to the `os.path.exists` module.
-    useEnv : bool, optional
-        Whether to use environment variables for configuration. Defaults to `False`.
-    customEnvVars : dict, optional
-        Custom environment variables to use for configuration. Defaults to `None`.
-    headers : dict, optional
-        Custom headers to include in the requests. Defaults to `None`, which generates them with default values.
-    useTLS : bool, optional
-        Whether to use TLS for HTTPS requests. Defaults to `None`, which falls back to the config.
-    unsafe : bool, optional
-        Whether to allow unsafe requests (e.g., ignore SSL errors). Defaults to `None`, which falls back to the config.
-    fetchCert : bool, optional
-        Whether to fetch the CA certificate. Defaults to `None`, which falls back to the config.
-    logToFile : bool, optional
-        Whether to log to a file. Defaults to `None`, which falls back to the config.
-    logLevel : int, optional
-        The logging level to use. Defaults to `logging.INFO`.
-    logPath : str, optional
-        Path where .log is saved
-    silent : bool, optional
-        Whether to suppress all logging output. Defaults to `None`, which falls back to the config.
-    suppressWarnings : bool, optional
-        Whether to suppress warnings from the `requests` module. Defaults to `None`, which falls back to the config.
-    customCert : str, optional
-        URL or path to a custom CA certificate. Defaults to `None`.
-    session : requests.Session, optional
-        A custom `requests.Session` object to use. Defaults to a new `requests.session()`.
-
     Attributes
     ----------
     session : requests.Session
@@ -231,6 +185,10 @@ class SecureRequests:
         Updates multiple headers based on the provided dictionary.
     headerRemoveMultiple(keys: List[HeaderKeys]) -> None
         Removes multiple header keys at once.
+    _serializeCookieInfo(self, cookieInfo: Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]) -> str:
+        Serializes the cookie attributes into a string.
+    _deserializeCookieInfo(self, cookieInfoStr: str) -> Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]:
+        Deserializes the string back into a dictionary of cookie attributes.
     cookieUpdate(key: CookieKeys, cookieInfo: Dict[CookieKeys, str]) -> None
         Sets or updates a single cookie with specified attributes.
     cookieGet(key: CookieKeys) -> Optional[Dict[CookieKeys, str]]
@@ -242,7 +200,6 @@ class SecureRequests:
     cookieGetAll() -> Dict[str, Dict[CookieKeys, str]]
         Retrieves all cookies with their attributes.
     """
-
     def __init__(
             self,
             requests: requests = requests,
@@ -264,6 +221,9 @@ class SecureRequests:
             silent: Optional[bool] = None,
             suppressWarnings: Optional[bool] = None,
             session: requests.Session = None) -> None:
+        """
+        Initializes the SecureRequests object with the specified parameters and defaults to the configuration settings from the config module.
+        """
         
         # ------------------------------------------------- Initialize Modules -------------------------------------------------
         self.pathJoin = pathJoin

@@ -4,8 +4,42 @@ It includes custom transport adapters, certificate management, and header/cookie
 
 Classes:
     TLSAdapter: A custom Transport Adapter for using a specified SSL context with requests.
+        Methods:
+            - __init__: Initializes the TLSAdapter with an optional SSL context.
+            - initPoolmanager: Initializes the pool manager with the SSL context.
+            - _createSSLContext: Creates and returns a default SSL context.
+
     SecureRequests: Provides methods to make HTTP requests with enhanced security features, including
                     SSL/TTLS configuration, certificate management, and custom headers and cookies.
+        Methods:
+            - __init__: Initializes the SecureRequests instance with various configuration options.
+            - _certificateFetch: Fetches the SSL certificate if required.
+            - _certificateSet: Sets the SSL certificate for the session.
+            - makeRequest: Makes an HTTP request with the given method, URL, and optional payload and headers.
+            - _logRequest: Logs the details of the HTTP request and response.
+            - headerGenerate: Generates a dictionary of default headers for HTTP requests.
+            - headerSetKey: Sets a specific header key to a given value.
+            - headerRemoveKey: Removes a specific header key.
+            - headerUpdateMultiple: Updates multiple header keys with the provided values.
+            - headerRemoveMultiple: Removes multiple header keys.
+            - _serializeCookieInfo: Serializes cookie information into a string.
+            - _deserializeCookieInfo: Deserializes a cookie information string back into a dictionary.
+            - cookieUpdate: Updates a specific cookie with the provided information.
+            - cookieGet: Retrieves the information for a specific cookie.
+            - cookieRemove: Removes a specific cookie.
+            - cookieUpdateMultiple: Updates multiple cookies with the provided information.
+            - cookieGetAll: Retrieves all cookies and their information.
+
+Functions:
+    headerGenerate: Generates a dictionary of default headers for HTTP requests.
+
+# Author: Julian Stiebler
+# GitHub Repository: https://github.com/JulianStiebler/secureRequests
+# GitHub Issues: https://github.com/JulianStiebler/secureRequests/issues
+# GitHub Wiki: https://github.com/JulianStiebler/secureRequests/wiki
+
+# Created: 15.07.2024
+# Last edited: 17.07.2024
 """
 
 from typing import Dict, Any, Optional, List, Union
