@@ -1,17 +1,19 @@
-# SecureRequests
+# secureRequests
 
-![Stars](https://img.shields.io/github/stars/JulianStiebler/secureRequests?style=social) ![Watchers](https://img.shields.io/github/watchers/JulianStiebler/secureRequests?style=social) ![GitHub Forks](https://img.shields.io/github/forks/JulianStiebler/secureRequests?style=social) 
+![Stars][Badge Stars] ![Watcher][Badge Watchers] ![Forks][Badge Forks]
 
-![Downloads](https://img.shields.io/github/downloads/JulianStiebler/secureRequests/total) [![Security Policy](https://img.shields.io/badge/Security-Policy-red.svg)](https://github.com/JulianStiebler/secureRequests/security/policy) ![Last Commit](https://img.shields.io/github/last-commit/JulianStiebler/secureRequests)
-![License](https://img.shields.io/github/license/JulianStiebler/secureRequests) ![Open Issues](https://img.shields.io/github/issues-raw/JulianStiebler/secureRequests)
-![Open Pull Requests](https://img.shields.io/github/issues-pr-raw/JulianStiebler/secureRequests) ![Contributors](https://img.shields.io/github/contributors/JulianStiebler/secureRequests)
+A simple library designed to make secure HTTPs requests more widespread with flexibility in SSL certificate management. 
+This library wraps a TSL Adapter around the session.request-methods and helps with certificate, cookie and header management. 
 
+![Release Version][Badge Release Version]  ![Release Date][Badge Release Date] ![CodeSize][Badge Code Size]
 
-![Build Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/unittest.yml/badge.svg) ![TypeCheck Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/typecheck.yml/badge.svg) ![CodeQL Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/codeql.yml/badge.svg) ![Ruff Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/ruff.yml/badge.svg)
+| **Ubuntu** | ![TypeCheck Ubuntu][Badge TypeCheck Ubuntu]              | ![UnitTest Ubuntu][Badge UnitTest Ubuntu]             |
+|------------|----------------------------------------------------------|-------------------------------------------------------|
+| **Mac**    | ![TypeCheck macOS][Badge TypeCheck macOS]                | ![UnitTest macOS][Badge UnitTest macOS]               |
+| **Windows**| ![TypeCheck Windows][Badge TypeCheck Windows]            | ![UnitTest Windows][Badge UnitTest Windows]           |
+| **All**    | ![CodeQL Status][Badge CodeQL]                           | ![Ruff Status][Badge Ruff]                            |
 
-![Version](https://img.shields.io/github/v/release/JulianStiebler/secureRequests) ![Release Date](https://img.shields.io/github/release-date/JulianStiebler/secureRequests) ![Code Size](https://img.shields.io/github/languages/code-size/JulianStiebler/secureRequests)  
-
-A simple library designed to make secure HTTP requests more widespread with flexibility in SSL certificate management. Requests use a TSL Adapter and allow easy request execution and configuration with SSLContext and Certificates. Also wraps good practice around the general use of requests.
+![Badge Last Commit][Badge Last Commit] ![Badge Security Policy][Badge Security Policy] ![Badge Open Issues][Badge Open Issues] ![Badge Open Pull Requests][Badge Open Pull Requests] ![Badge Contributors][Badge Contributors]
 
 ## Table of Contents
 
@@ -116,3 +118,32 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 > Built with love by Julian Stiebler
 
 ### Refer to our [Wiki](https://github.com/JulianStiebler/secureRequests/wiki)
+
+
+<!-- Define URL aliases for badges -->
+[Badge Stars]: https://img.shields.io/github/stars/JulianStiebler/secureRequests?style=social
+[Badge Watchers]: https://img.shields.io/github/watchers/JulianStiebler/secureRequests?style=social
+[Badge Forks]: https://img.shields.io/github/forks/JulianStiebler/secureRequests?style=social
+
+[Badge UnitTest Ubuntu]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=ubuntu-latest&label=UnitTest&logo=ubuntu&logoColor=white&style=for-the-badge
+[Badge UnitTest macOS]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=mac-latest&label=UnitTest&logo=apple&logoColor=white&style=for-the-badge
+[Badge UnitTest Windows]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=windows-latest&label=Win%20UnitTest&logo=windows&logoColor=white&style=for-the-badge
+
+[Badge TypeCheck Ubuntu]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=ubuntu-latest&label=TypeCheck&logo=ubuntu&logoColor=white&style=for-the-badge
+[Badge TypeCheck macOS]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=mac-latest&label=TypeCheck&logo=apple&logoColor=white&style=for-the-badge
+[Badge TypeCheck Windows]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=windows-latest&label=Win%20TypeCheck&logo=windows&logoColor=white&style=for-the-badge
+[Badge CodeQL]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/codeql.yml?branch=main&label=CodeQL&logo=github&logoColor=white&style=for-the-badge
+[Badge Ruff]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/codeql.yml?branch=main&label=Ruff%20Lint&logo=ruff&logoColor=white&style=for-the-badge
+
+[Badge Release Version]: https://img.shields.io/github/v/release/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Release Date]: https://img.shields.io/github/release-date/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Code Size]: https://img.shields.io/github/languages/code-size/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+
+[Badge Last Commit]: https://img.shields.io/github/last-commit/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Security Policy]: https://img.shields.io/badge/Security-Policy-red.svg?style=for-the-badge&logo=empty
+[Badge Open Issues]: https://img.shields.io/github/issues-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Open Pull Requests]: https://img.shields.io/github/issues-pr-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Contributors]: https://img.shields.io/github/contributors/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+
+[Badge Downloads]: https://img.shields.io/github/downloads/JulianStiebler/secureRequests/total?style=for-the-badge&logo=empty
+[Badge License]: https://img.shields.io/github/license/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
