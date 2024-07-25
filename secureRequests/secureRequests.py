@@ -393,6 +393,7 @@ class SecureRequests:
         method: str = "GET",
         payload: Optional[Dict[str, Any]] = None,
         headers: Optional[Dict[str, str]] = None,
+        **kwargs
     ) -> requests.Response:
         """
         Makes an HTTP request with the specified parameters.
@@ -413,48 +414,13 @@ class SecureRequests:
         requests.Response
             The HTTP response.
 
+        **kwargs
+        --------
+        **kwargs from requests  are allowed here aswell.
+
         Raises
         ------
-        ValueError
-            If an unsupported HTTP method is provided.
-        BadRequestException
-            If the response status code is 400.
-        UnauthorizedException
-            If the response status code is 401.
-        ForbiddenException
-            If the response status code is 403.
-        NotFoundException
-            If the response status code is 404.
-        MethodNotAllowedException
-            If the response status code is 405.
-        NotAcceptableException
-            If the response status code is 406.
-        ProxyAuthenticationRequiredException
-            If the response status code is 407.
-        RequestTimeoutException
-            If the response status code is 408.
-        PayloadTooLargeException
-            If the response status code is 413.
-        TooManyRequestsException
-            If the response status code is 429.
-        InternalServerErrorException
-            If the response status code is 500.
-        BadGatewayException
-            If the response status code is 502.
-        ServiceUnavailableException
-            If the response status code is 503.
-        GatewayTimeoutException
-            If the response status code is 504.
-        UnknownErrorException
-            If the response status code is 520.
-        WebServerDownException
-            If the response status code is 521.
-        ConnectionTimedOutException
-            If the response status code is 522.
-        OriginUnreachableException
-            If the response status code is 523.
-        TimeoutOccurredException
-            If the response status code is 524.
+        Any exception matching to a status code.
         """
         srMethods = {
             "GET": self.session.get,
@@ -469,7 +435,7 @@ class SecureRequests:
 
         headers = headers or self.headers
         response = srMethods[method](
-            url, data=payload, headers=headers, verify=self.verify
+            url, data=payload, headers=headers, verify=self.verify, **kwargs
         )
         self._logRequest(method, url, response=response, data=payload, headers=headers)
         return response
