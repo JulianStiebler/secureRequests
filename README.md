@@ -27,9 +27,7 @@ This library wraps a TSL Adapter around the session.request-methods and helps wi
 - [Installation](#installation)
   - [Install Locally from Source](#install-locally-from-source)
   - [Install From PyPi](#install-from-pypi)
-- [License](#license)
 - [Acknowledgments](#acknowledgments)
-8. [Changelog](#changelog)
 
 # General Information
 
@@ -109,11 +107,6 @@ pip install .
 ## Install from PyPi
 
 > Work in progress
-
-
-# License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
 
 # Acknowledgments
 > Built with love by Julian Stiebler
