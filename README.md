@@ -7,9 +7,11 @@
 ![Open Pull Requests](https://img.shields.io/github/issues-pr-raw/JulianStiebler/secureRequests) ![Contributors](https://img.shields.io/github/contributors/JulianStiebler/secureRequests)
 
 
-![Build Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/unittest.yml/badge.svg) ![TypeCheck Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/typecheck.yml/badge.svg) ![CodeQL Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/codeql.yml/badge.svg) ![Ruff Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/ruff.yml/badge.svg)
+![TypeCheck Ubuntu](https://github.com/JulianStiebler/secureRequests/actions/workflows/typecheck.yml/badge.svg?branch=main&os=ubuntu-latest) ![TypeCheck macOS](https://github.com/JulianStiebler/secureRequests/actions/workflows/typecheck.yml/badge.svg?branch=main&os=macos-latest) ![TypeCheck Windows](https://github.com/JulianStiebler/secureRequests/actions/workflows/typecheck.yml/badge.svg?branch=main&os=windows-latest)
 
-![Version](https://img.shields.io/github/v/release/JulianStiebler/secureRequests) ![Release Date](https://img.shields.io/github/release-date/JulianStiebler/secureRequests) ![Code Size](https://img.shields.io/github/languages/code-size/JulianStiebler/secureRequests)  
+![UnitTest Ubuntu](https://github.com/JulianStiebler/secureRequests/actions/workflows/unittest.yml/badge.svg?branch=main&os=ubuntu-latest) ![UnitTest macOS](https://github.com/JulianStiebler/secureRequests/actions/workflows/unittest.yml/badge.svg?branch=main&os=macos-latest) ![UnitTest Windows](https://github.com/JulianStiebler/secureRequests/actions/workflows/unittest.yml/badge.svg?branch=main&os=windows-latest)
+
+![CodeQL Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/codeql.yml/badge.svg)  ![Ruff Status](https://github.com/JulianStiebler/secureRequests/actions/workflows/ruff.yml/badge.svg) ![Version](https://img.shields.io/github/v/release/JulianStiebler/secureRequests) ![Release Date](https://img.shields.io/github/release-date/JulianStiebler/secureRequests) ![Code Size](https://img.shields.io/github/languages/code-size/JulianStiebler/secureRequests)  
 
 A simple library designed to make secure HTTP requests more widespread with flexibility in SSL certificate management. Requests use a TSL Adapter and allow easy request execution and configuration with SSLContext and Certificates. Also wraps good practice around the general use of requests.
 
