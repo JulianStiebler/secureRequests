@@ -46,7 +46,9 @@ def formatCookies(cookies):
     return "\n".join(formattedCookies)
 
 class CustomTestResult(unittest.TextTestResult):
+    """Custom test result class to store additional information about test results."""
     def __init__(self, *args, **kwargs):
+        """Initialize the test variables."""
         super().__init__(*args, **kwargs)
         self.passedTests = []
         self.failedTests = []
@@ -55,24 +57,27 @@ class CustomTestResult(unittest.TextTestResult):
         self._currentTest = None
 
     def addSuccess(self, test):
+        """Add a passed test result and log its output."""
         super().addSuccess(test)
         self.passedTests.append(test)
         self.testLogs[test] = self._getTestLog()
         logging.info(f"[PASS] {test} - Log Output:\n{self.testLogs[test]}")
 
     def addFailure(self, test, err):
+        """Add a failed test result and log its output."""
         super().addFailure(test, err)
         self.failedTests.append((test, err))
         self.testLogs[test] = self._getTestLog()
         logging.error(f"[FAIL] {test} - Log Output:\n{self.testLogs[test]}")
 
     def startTest(self, test):
+        """Start a test and set up logging for it."""
         super().startTest(test)
         self._currentTest = test
         self._setup_logger(test)
 
     def _setup_logger(self, test):
-        # Set up logger to capture logs for each test
+        """Set up logger to capture logs for each test."""
         testLogStream = io.StringIO()
         handler = logging.StreamHandler(testLogStream)
         handler.setLevel(logging.INFO)
@@ -85,6 +90,7 @@ class CustomTestResult(unittest.TextTestResult):
         self._originalStream[test] = (testLogStream, handler)
 
     def _getTestLog(self):
+        """Get the log output for the current test."""
         logger = logging.getLogger()
         testLogStream, handler = self._originalStream.get(self._currentTest, (None, None))
         if testLogStream and handler:
@@ -93,19 +99,24 @@ class CustomTestResult(unittest.TextTestResult):
         return ""
 
     def stopTest(self, test):
+        """Stop a test and clear the current test reference."""
         super().stopTest(test)
         self._currentTest = None
 
 class CustomTestRunner(unittest.TextTestRunner):
+    """Custom test runner class to use the custom test result class and generate a report."""
     def _makeResult(self):
+        """ Returns a result build with CustomTestResult """
         return CustomTestResult(self.stream, self.descriptions, self.verbosity)
 
     def run(self, test):
+        """Run the test and generate a markdown report."""
         result = super().run(test)
         self._generateReport(result)
         return result
 
     def _generateReport(self, result):
+        """Generate a markdown report of the test results."""
         with open("unitTest/unitTestResults.md", "w") as reportFile:
             reportFile.write("# unitTest\n\n")
             reportFile.write("## Table of Contents\n\n")
@@ -127,6 +138,7 @@ class CustomTestRunner(unittest.TextTestRunner):
                 reportFile.write(self._formatTestEntry(test, None, "Passing", result))
 
     def _formatTestEntry(self, test, err, status, result):
+        """Format an individual test entry for the report."""
         output = []
         testName = test._testMethodName
         output.append(f"### {testName}\n")
@@ -152,13 +164,17 @@ class CustomTestRunner(unittest.TextTestRunner):
         return "\n".join(output) + "\n"
 
     def _extractConfig(self, test):
-        # Extract configurations from the test instance
+        """Extract configurations from the test instance."""
         if hasattr(test, 'test_config'):
             return test.test_config
         return {}
 
 class TestSecureRequests(unittest.TestCase):
     def setUp(self):
+        """
+        Set up the initial test environment.
+        Initializes base URL, status codes, logging, and other necessary variables.
+        """
         self.baseURL = 'https://httpbin.org'
         self.statusCodes = STATUS_CODE_EXCEPTION_MAP
         self.failures = []
@@ -166,6 +182,10 @@ class TestSecureRequests(unittest.TestCase):
         logging.basicConfig(stream=self.logStream, level=logging.INFO)
 
     def configsSAFE(self):
+        """
+        Returns a list of safe configuration dictionaries for SecureRequests.
+        These configurations ensure that the requests are made securely.
+        """
         return [
             {'certificateNeedFetch': False, 'unsafe': False, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
             {'certificateNeedFetch': False, 'unsafe': False, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
@@ -174,6 +194,10 @@ class TestSecureRequests(unittest.TestCase):
         ]
 
     def configsUNSAFE(self):
+        """
+        Returns a list of unsafe configuration dictionaries for SecureRequests.
+        These configurations are intentionally set up to test insecure requests.
+        """
         return [
             {'certificateNeedFetch': False, 'unsafe': True, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
             {'certificateNeedFetch': False, 'unsafe': True, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
@@ -183,6 +207,10 @@ class TestSecureRequests(unittest.TestCase):
 
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_HTTPMethods_SAFE(self, srRequestMock):
+        """
+        Test HTTP methods (GET, POST, PUT, DELETE, PATCH) with safe configurations.
+        Checks the response status codes 200 and 400 for each method.
+        """
         config = self.configsSAFE()[1]
         srRequest = SecureRequests(**config)
         methods = ['get', 'post', 'put', 'delete', 'patch']
@@ -211,6 +239,10 @@ class TestSecureRequests(unittest.TestCase):
 
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_HTTPMethods_Cookies_SAFE(self, srRequestMock):
+        """
+        Test HTTP methods with cookies and safe configurations.
+        Checks the response status codes 200 and 400 for each method.
+        """
         config = self.configsSAFE()[1]
         srRequest = SecureRequests(**config)
         srRequest.cookieUpdate(CookieKeys.SESSION_ID, {
@@ -245,12 +277,15 @@ class TestSecureRequests(unittest.TestCase):
                 self.assertEqual(response.status_code, 400)
                 logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 400.")
                 logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatHeaders(srRequest.headers)}\n')
-                
 
         self.test_config = config
 
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_HTTPMethods_Cookies_UNSAFE(self, srRequestMock):
+        """
+        Test HTTP methods with cookies and unsafe configurations.
+        Checks the response status codes 200 and 400 for each method.
+        """
         config = self.configsUNSAFE()[0]
         srRequest = SecureRequests(**config)
         srRequest.cookieUpdate(CookieKeys.SESSION_ID, {
@@ -289,6 +324,10 @@ class TestSecureRequests(unittest.TestCase):
 
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_HTTPMethods_UNSAFE(self, srRequestMock):
+        """
+        Test HTTP methods (GET, POST, PUT, DELETE, PATCH) with unsafe configurations.
+        Checks the response status codes 200 and 400 for each method.
+        """
         config = self.configsUNSAFE()[0]
         srRequest = SecureRequests(**config)
         methods = ['get', 'post', 'put', 'delete', 'patch']
@@ -318,6 +357,10 @@ class TestSecureRequests(unittest.TestCase):
         self.test_config = config
 
     def test_fetchCertOnInit_SAFE(self):
+        """
+        Test certificate fetching on initialization with safe configurations.
+        Checks if the certificate file exists and is valid.
+        """
         config = self.configsSAFE()[2]
         srRequest = SecureRequests(**config)
         if config['certificateNeedFetch']:
@@ -333,6 +376,10 @@ class TestSecureRequests(unittest.TestCase):
         self.test_config = config
 
     def test_fetchCertOnInit_UNSAFE(self):
+        """
+        Test certificate fetching on initialization with unsafe configurations.
+        Checks if the certificate file exists and is valid.
+        """
         config = self.configsUNSAFE()[2]
         srRequest = SecureRequests(**config)
 
@@ -348,10 +395,12 @@ class TestSecureRequests(unittest.TestCase):
         logging.info(f"[PASS][UNSAFE] Initialization with certificateNeedFetch: {config['certificateNeedFetch']}")
         self.test_config = config
 
-
-
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_mockStatusCodes(self, srRequestMock):
+        """
+        Test handling of different HTTP status codes.
+        Ensures the appropriate exceptions are raised for each status code.
+        """
         config = self.configsSAFE()[1]
         srRequest = SecureRequests(**config)
         
