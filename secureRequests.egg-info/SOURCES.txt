@@ -3,7 +3,6 @@ MANIFEST.in
 README.md
 setup.py
 secureRequests/__init__.py
-secureRequests/cli.py
 secureRequests/secureRequests.py
 secureRequests/secureRequests.pyi
 secureRequests/secureRequestsConfig.py

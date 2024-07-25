@@ -1,3 +1,21 @@
+"""
+This module defines enumerations for HTTP header keys, cookie keys, and cookie attribute keys. 
+These enumerations are used to standardize and manage the various HTTP headers and cookies commonly 
+used in web applications.
+
+- HeaderKeys: Contains standard HTTP header fields.
+- CookieKeys: Contains common cookie names used for storing various user-related information.
+- CookieAttributeKeys: Contains attributes used to define properties of cookies.
+
+# Author: Julian Stiebler
+# GitHub Repository: https://github.com/JulianStiebler/secureRequests
+# GitHub Issues: https://github.com/JulianStiebler/secureRequests/issues
+# GitHub Wiki: https://github.com/JulianStiebler/secureRequests/wiki
+
+# Created: 15.07.2024
+# Last edited: 17.07.2024
+"""
+
 from enum import Enum
 from datetime import datetime
 

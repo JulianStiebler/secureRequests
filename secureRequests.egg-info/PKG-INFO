@@ -20,6 +20,7 @@ A simple library designed to make secure HTTPs requests more widespread with fle
 This library wraps a TSL Adapter around the session.request-methods and helps with certificate, cookie and header management. 
 
 ![Release Version][Badge Release Version]  ![Release Date][Badge Release Date] ![CodeSize][Badge Code Size]
+![Docstring Coverage][Badge Docstring Coverage]
 
 | **Ubuntu** | ![TypeCheck Ubuntu][Badge TypeCheck Ubuntu]              | ![UnitTest Ubuntu][Badge UnitTest Ubuntu]             |
 |------------|----------------------------------------------------------|-------------------------------------------------------|
@@ -158,6 +159,8 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 [Badge Open Issues]: https://img.shields.io/github/issues-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 [Badge Open Pull Requests]: https://img.shields.io/github/issues-pr-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 [Badge Contributors]: https://img.shields.io/github/contributors/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+[Badge Docstring Coverage]: https://img.shields.io/badge/docstr%20coverage-90%25-blue?style=for-the-badge&logo=empty
 
 [Badge Downloads]: https://img.shields.io/github/downloads/JulianStiebler/secureRequests/total?style=for-the-badge&logo=empty
 [Badge License]: https://img.shields.io/github/license/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
+
