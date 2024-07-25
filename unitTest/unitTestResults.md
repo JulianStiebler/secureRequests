@@ -46,17 +46,17 @@
 >>> Testing Status Code 400
 [PASS][SAFE] GET request to https://httpbin.org/GET with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.610670, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.153187, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -66,17 +66,17 @@
 >>> Testing Status Code 400
 [PASS][SAFE] POST request to https://httpbin.org/POST with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.610670, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.153187, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -86,17 +86,17 @@
 >>> Testing Status Code 400
 [PASS][SAFE] PUT request to https://httpbin.org/PUT with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.610670, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.153187, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -106,17 +106,17 @@
 >>> Testing Status Code 400
 [PASS][SAFE] DELETE request to https://httpbin.org/DELETE with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.610670, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.153187, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -126,17 +126,17 @@
 >>> Testing Status Code 400
 [PASS][SAFE] PATCH request to https://httpbin.org/PATCH with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.610670, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.153187, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 
 ```
@@ -171,17 +171,17 @@
 >>> Testing Status Code 400 <<<
 [PASS][SAFE] GET request to https://httpbin.org/GET with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.615890, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.161147, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="118", "Chromium";v="118", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="120", "Chromium";v="120", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -189,17 +189,17 @@
 >>> Testing Status Code 400 <<<
 [PASS][SAFE] POST request to https://httpbin.org/POST with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.615890, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.161147, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="118", "Chromium";v="118", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="120", "Chromium";v="120", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -207,17 +207,17 @@
 >>> Testing Status Code 400 <<<
 [PASS][SAFE] PUT request to https://httpbin.org/PUT with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.615890, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.161147, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="118", "Chromium";v="118", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="120", "Chromium";v="120", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -225,17 +225,17 @@
 >>> Testing Status Code 400 <<<
 [PASS][SAFE] DELETE request to https://httpbin.org/DELETE with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.615890, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.161147, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="118", "Chromium";v="118", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="120", "Chromium";v="120", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -243,17 +243,17 @@
 >>> Testing Status Code 400 <<<
 [PASS][SAFE] PATCH request to https://httpbin.org/PATCH with status code 400.
 
-- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 22:22:07.615890, SECURE: True}.
+- Used Cookies:  > CookieKeys.SESSION_ID: {PATH: /, EXPIRES: 2024-08-01 23:45:49.161147, SECURE: True}.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="118", "Chromium";v="118", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="120", "Chromium";v="120", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
 
 
 ```
@@ -293,13 +293,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="114", "Chromium";v="114", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -312,13 +312,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="114", "Chromium";v="114", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -331,13 +331,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="114", "Chromium";v="114", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -350,13 +350,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="114", "Chromium";v="114", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -369,13 +369,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="114", "Chromium";v="114", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_2_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
 
 
 ```
@@ -414,13 +414,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="121", "Chromium";v="121", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="112", "Chromium";v="112", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -432,13 +432,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="121", "Chromium";v="121", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="112", "Chromium";v="112", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -450,13 +450,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="121", "Chromium";v="121", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="112", "Chromium";v="112", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -468,13 +468,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="121", "Chromium";v="121", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="112", "Chromium";v="112", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing Status Code 200 <<<
@@ -486,13 +486,13 @@
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="121", "Chromium";v="121", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="112", "Chromium";v="112", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "X11"
+ > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36
 
 
 ```
