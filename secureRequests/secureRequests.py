@@ -269,7 +269,7 @@ class SecureRequests:
         if self.suppressWarnings:
             warnings.filterwarnings("ignore", category=InsecureRequestWarning)
 
-        self.fetchCertificate = certificateNeedFetch if certificateNeedFetch is not None else config.getCerificateNeedFetch()
+        self.fetchCertificate = certificateNeedFetch if certificateNeedFetch is not None else config.getCertificateNeedFetch()
         if self.fetchCertificate:
             self._certificateFetch()
         self.verify = self._certificateSet()
