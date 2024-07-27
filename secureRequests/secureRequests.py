@@ -646,87 +646,71 @@ class SecureRequests:
     # *                                                 Cookie Related Stuff                                                *
     # ***********************************************************************************************************************
 
-    def _serializeCookieInfo(self, cookieInfo: Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]) -> str:
+    def _serializeCookieInfo(self, cookieInfo: Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]) -> str:
         """
         Serializes the cookie attributes into a string.
 
-        Parameters:
-        ------------
-        cookieInfo: Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]
-            A dictionary containing the attributes of the cookie.
+        Args:
+            cookieInfo (Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]): 
+                A dictionary containing cookie attributes.
 
         Returns:
-        ------------
-        str
-            The serialized string of cookie attributes.
+            str: A serialized string of cookie attributes.
         """
-        return '|'.join(f'{key.value}={value}' for key, value in cookieInfo.items())
+        return '|'.join(f'{str(key)}={value}' for key, value in cookieInfo.items())
 
-    def _deserializeCookieInfo(self, cookieInfoStr: str) -> Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]:
+    def _deserializeCookieInfo(self, cookieInfoStr: str) -> Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]:
         """
         Deserializes the string back into a dictionary of cookie attributes.
 
-        Parameters:
-        ------------
-        cookieInfoStr: str
-            The serialized string of cookie attributes.
+        Args:
+            cookieInfoStr (str): A serialized string of cookie attributes.
 
         Returns:
-        ------------
-        Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]
-            The deserialized dictionary of cookie attributes.
+            Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]: 
+                A dictionary containing cookie attributes.
         """
         items = cookieInfoStr.split('|')
         cookieInfo = {}
         for item in items:
-            key, value = item.split('=')
-            cookieInfo[CookieAttributeKeys(key)] = value
+            if '=' in item:
+                key, value = item.split('=', 1)
+                try:
+                    key = CookieAttributeKeys(key)
+                except ValueError:
+                    pass
+                cookieInfo[key] = value
+            else:
+                logging.warning(f"Skipping invalid cookie attribute '{item}'")
         return cookieInfo
 
-    def cookieUpdate(self, key: CookieKeys, cookieInfo: Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]) -> None:
+    def cookieUpdate(self, key: CookieKeys, cookieInfo: Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
         """
         Sets or updates a single cookie with specified attributes.
 
-        Parameters:
-        ------------
-        key: CookieKeys
-            The key identifying the cookie to be set or updated.
-        cookieInfo: Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]
-            A dictionary containing the attributes of the cookie.
-
-        Example:
-        ------------
-        >>> cookie_attributes = {
-        ...     CookieAttributeKeys.DOMAIN: 'example.com',
-        ...     CookieAttributeKeys.PATH: '/',
-        ...     CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
-        ...     CookieAttributeKeys.SECURE: True,
-        ...     CookieAttributeKeys.HTTP_ONLY: True,
-        ...     CookieAttributeKeys.SAME_SITE: 'Strict',
-        ...     CookieAttributeKeys.MAX_AGE: 604800  # 7 days in seconds
-        ... }
-
-        # Set the cookie
-        secureRequests.cookieUpdate(CookieKeys.SESSION_ID, cookieAttributes)
+        Args:
+            key (CookieKeys): The key of the cookie to update.
+            cookieInfo (Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]): 
+                The cookie attributes to set or update.
         """
+        if isinstance(cookieInfo, str):
+            cookieInfo = self._deserializeCookieInfo(cookieInfo)
+        
         cookieValue = self._serializeCookieInfo(cookieInfo)
-        self.session.cookies.set(key.value, cookieValue)
+        self.session.cookies.set(str(key), cookieValue)
 
-    def cookieGet(self, key: CookieKeys) -> Optional[Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]:
+    def cookieGet(self, key: CookieKeys) -> Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]:
         """
         Retrieves the attributes of a single cookie.
 
-        Parameters:
-        ------------
-        key: CookieKeys
-            The key identifying the cookie to be retrieved.
+        Args:
+            key (CookieKeys): The key of the cookie to retrieve.
 
         Returns:
-        ------------
-        Optional[Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
-            A dictionary containing the attributes of the cookie if it exists, otherwise None.
+            Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
+                A dictionary containing the cookie attributes, or None if the cookie does not exist.
         """
-        cookieValue = self.session.cookies.get(key.value)
+        cookieValue = self.session.cookies.get(str(key))
         if cookieValue:
             return self._deserializeCookieInfo(cookieValue)
         return None
@@ -735,56 +719,29 @@ class SecureRequests:
         """
         Removes a single cookie.
 
-        Parameters:
-        ------------
-        key: CookieKeys
-            The key identifying the cookie to be removed.
+        Args:
+            key (CookieKeys): The key of the cookie to remove.
         """
-        self.session.cookies.pop(key.value, None)
+        self.session.cookies.pop(str(key), None)
 
-    def cookieUpdateMultiple(self, cookies: Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]) -> None:
+    def cookieUpdateMultiple(self, cookies: Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
         """
         Adds or updates multiple cookies at once.
 
-        Parameters:
-        ------------
-        cookies: Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
-            A dictionary of cookies with their attributes to be set or updated.
-
-        Example:
-        ------------
-        >>> cookies = {
-        ...     CookieKeys.AUTH_TOKEN: {
-        ...         CookieAttributeKeys.DOMAIN: 'example.com',
-        ...         CookieAttributeKeys.PATH: '/',
-        ...         CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=30),
-        ...         CookieAttributeKeys.SECURE: True,
-        ...         CookieAttributeKeys.HTTP_ONLY: True,
-        ...         CookieAttributeKeys.SAME_SITE: 'Lax'
-        ...     },
-        ...     CookieKeys.USER_PREFERENCES: {
-        ...         CookieAttributeKeys.DOMAIN: 'example.com',
-        ...         CookieAttributeKeys.PATH: '/',
-        ...         CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
-        ...         CookieAttributeKeys.SAME_SITE: 'None',
-        ...         CookieAttributeKeys.SECURE: True
-        ...     }
-        ... }
-
-        # Set or update multiple cookies
-        cookie_manager.cookieUpdateMultiple(cookies)
+        Args:
+            cookies (Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]): 
+                A dictionary containing multiple cookies and their attributes.
         """
         for key, cookieInfo in cookies.items():
             self.cookieUpdate(key, cookieInfo)
 
-    def cookieGetAll(self) -> Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]:
+    def cookieGetAll(self) -> Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]:
         """
         Retrieves all cookies with their attributes.
 
         Returns:
-        ------------
-        Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
-            A dictionary of all cookies with their attributes.
+            Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
+                A dictionary containing all cookies and their attributes.
         """
         allCookies = {}
         for cookie in self.session.cookies:
