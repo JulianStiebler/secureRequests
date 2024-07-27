@@ -17,6 +17,7 @@ SecureRequests: Provides methods to make HTTP requests with enhanced security fe
         - _certificateSet: Sets the SSL certificate for the session.
         - makeRequest: Makes an HTTP request with the given method, URL, and optional payload and headers.
         - _logRequest: Logs the details of the HTTP request and response.
+        - _logMessage: Logs a message with a specified level and [category].
         - headerGenerate: Generates a dictionary of default headers for HTTP requests.
         - headerSetKey: Sets a specific header key to a given value.
         - headerRemoveKey: Removes a specific header key.
@@ -30,16 +31,13 @@ SecureRequests: Provides methods to make HTTP requests with enhanced security fe
         - cookieUpdateMultiple: Updates multiple cookies with the provided information.
         - cookieGetAll: Retrieves all cookies and their information.
 
-Functions:
-    headerGenerate: Generates a dictionary of default headers for HTTP requests.
 
 Usage Examples
 --------------
 >>> from secureRequests import SecureRequests
 >>> print(headers)
 
->>> sr = SecureRequests()
->>> headers = sr.headerGenerate(customHeaders={"Content-Type": "application/json"})
+>>> sr = SecureRequests(headers={"Content-Type": "application/json"})
 >>> sr.headerSetKey(HeaderKeys.AUTHORIZATION, "Bearer token123")
 >>> sr.cookieUpdate(CookieKeys.SESSION_ID, {
 ...     CookieAttributeKeys.DOMAIN: 'example.com',
@@ -48,21 +46,11 @@ Usage Examples
 ...     CookieAttributeKeys.SECURE: True
 ... })
 >>> response = sr.makeRequest("https://httpbin.org/get")
+>>> ->> [15.07.2024 12:00:00][SAFE][TLS] GET request to https://httpbin.org/get with headers ...
 >>> print(response.status_code)
-
-Returns
--------
->>>     makeRequest: requests.Response
->>>     headerGenerate: Dict[str, str]
->>>     headerSetKey: None
->>>     headerRemoveKey: None
->>>     headerUpdateMultiple: None
->>>     headerRemoveMultiple: None
->>>     cookieUpdate: None
->>>     cookieGet: Optional[Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
->>>     cookieRemove: None
->>>     cookieUpdateMultiple: None
->>>     cookieGetAll: Dict[CookieKeys, Dict[CookieAttributeKeys, Union[str, bool, int, datetime]]]
+>>> print(response.reason)
+>>> --- 200
+>>> --- OK
 
 # Author: Julian Stiebler
 # GitHub Repository: https://github.com/JulianStiebler/secureRequests
@@ -70,22 +58,24 @@ Returns
 # GitHub Wiki: https://github.com/JulianStiebler/secureRequests/wiki
 
 # Created: 15.07.2024
-# Last edited: 17.07.2024
+# Last edited: 28.07.2024
 """
 
-import requests
 from os.path import exists as PathExists
 from os.path import join as PathJoin
+import requests
 import ssl
 import warnings
 import logging
 import random
 from datetime import datetime
+from urllib3.exceptions import InsecureRequestWarning
+from hashlib import sha256
+
 from typing import Dict, Any, Optional, List, Union
 from .secureRequestsConfig import config
 from .secureRequestsDecorators import handleResponse
 from .secureRequestsEnums import HeaderKeys, CookieKeys, CookieAttributeKeys
-from urllib3.exceptions import InsecureRequestWarning
 
 class TLSAdapter(requests.adapters.HTTPAdapter):
     """
@@ -106,7 +96,7 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
     """
 
     def __init__(
-        self, sslContext: Optional[ssl.SSLContext] = None, **kwargs: Any
+        self, SSLContext: Optional[ssl.SSLContext] = None, **kwargs: Any
     ) -> None:
         """
         Initializes the TLSAdapter with the specified SSL context.
@@ -122,7 +112,7 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
         -------
         None
         """
-        self.ssl_context = sslContext
+        self.SSLContext = SSLContext
         super().__init__(**kwargs)
 
     def initPoolmanager(self, *args: Any, **kwargs: Any) -> None:
@@ -140,21 +130,14 @@ class TLSAdapter(requests.adapters.HTTPAdapter):
         -------
         None
         """
-        context = self.ssl_context or self._createSSLCOntext()
-        kwargs["ssl_context"] = context
+        context = self.SSLContext or self._createSSLCOntext()
+        kwargs['ssl_context'] = context
         super().init_poolmanager(*args, **kwargs)
 
     def _createSSLCOntext(self) -> ssl.SSLContext:
-        """
-        Creates a default SSL context with specific cipher settings.
-
-        Returns
-        -------
-        ssl.SSLContext
-            Configured SSL context.
-        """
+        """Creates a default SSL context with specific cipher settings."""
         context = ssl.create_default_context()
-        context.set_ciphers("HIGH:!DH:!aNULL")
+        context.set_ciphers('HIGH:!DH:!aNULL')
         return context
 
 class SecureRequests:
@@ -170,11 +153,18 @@ class SecureRequests:
         The headers to include in the requests.
     cookies : dict
         The cookies to include in the requests.
+    logger : logging.Logger
+        The logger object for logging messages. Only available if `logToFile` is set to True.
+        Named 'SecureRequests'
 
     Methods
     -------
     makeRequest(url: str, method: str = "GET", payload: Optional[Dict[str, Any]] = None, headers: Optional[Dict[str, str]] = None) -> requests.Response
         Makes an HTTP request with the specified parameters.
+    _logRequest(method: str, url: str, response: requests.Response, **kwargs: Any) -> None
+        Logs an HTTP request and response details.
+    _logMessage(message: str, level: str = "DEBUG", category: str = "") -> None
+        Logs a message with the specified logging level and category.
     headerGenerate(referer: str = "https://httpbin.org/", ...) -> Dict[str, str]
         Generates default headers with optional custom values.
     headerSetKey(key: HeaderKeys, value: str) -> None
@@ -212,6 +202,7 @@ class SecureRequests:
             useTLS: Optional[bool] = None,
             unsafe: Optional[bool] = None,
             certificateNeedFetch: Optional[bool] = None,
+            certificateVerifyChecksum: Optional[bool] = None,
             certificateURL: Optional[str] = None,
             certificatePath: Optional[str] = None,
             logToFile: Optional[bool] = None,
@@ -239,11 +230,13 @@ class SecureRequests:
         if self.useTLS and not self.unsafe:
             self.session.mount("https://", TLSAdapter())
 
-        self.headers = self.headerGenerate(headers) or self.headerGenerate()
+        # ----------------------------------------------- Certificate Related Stuff -----------------------------------------------
         self.certificateURL = certificateURL if certificateURL else config.getCertificateURL()
         self.certificatePath = certificatePath if certificatePath else config.getCertificatePath()
+        self.certificateVerifyChecksum = certificateVerifyChecksum if certificateVerifyChecksum is not None else config.getCertificateVerifyChecksum()
 
         # ------------------------------------------ Initialize Config Related Variables ------------------------------------------
+        self.headers = self.headerGenerate(headers) or self.headerGenerate()
         if useEnv:
             config.EVarSetMode(True)
             if customEnvVars:
@@ -259,64 +252,132 @@ class SecureRequests:
 
         if self.logToFile:
             handler = logging.FileHandler(self.logPath)
-            self.logger = logging.getLogger("SecureRequests")
+            self.logger = logging.getLogger('SecureRequests')
             self.logger.setLevel(self.logLevel)
             self.logger.addHandler(handler)
 
         if self.silent:
-            logging.disable(logging.CRITICAL)
+            logging.disable()
 
         if self.suppressWarnings:
             warnings.filterwarnings("ignore", category=InsecureRequestWarning)
 
         self.fetchCertificate = certificateNeedFetch if certificateNeedFetch is not None else config.getCertificateNeedFetch()
         if self.fetchCertificate:
-            self._certificateFetch()
+            self._certificateFetch(verifyChecksum=self.certificateVerifyChecksum)
         self.verify = self._certificateSet()
+
+    def _logMessage(self, message:str, level:Union[str, int]="DEBUG", category:str = ""):
+        """
+        Logs a message using the instance's logger at the specified logging level.
+        
+        Parameters
+        ----------
+        level : str
+            The logging level (e.g., 'debug', 'info', 'warning', 'error').
+        message : str, optional
+            The message to log. Defaults to "DEBUG"
+        category : str, optional
+        """
+        if hasattr(self, 'logger'):
+            timestamp = self.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            logFunction = getattr(self.logger, level, None)
+            category = f"[{category}]" if category else ""
+            if callable(logFunction):
+                logFunction(f"[{timestamp}]{category} {message}")
 
     # ***********************************************************************************************************************
     # *                                            Certificate Related Stuff                                                *
     # ***********************************************************************************************************************
 
-    def _certificateFetch(self, force=False) -> None:
+    def _certificateFetch(self, force:bool=False, verifyChecksum:bool=False, preCalcChecksum:str=None) -> None:
         """
         Fetches a certificate from the configured URL and saves it to the local file system.
 
         Parameters
         ----------
-        None
-            This method does not take any parameters.
+        force : bool, optional
+            If True, forces fetching the certificate even if it already exists. 
+            Default is False.
+        verifyChecksum : bool, optional
+            If True, verifies the SHA-256 checksum of the fetched certificate. 
+            Default is False.
+        checksum : str, optional
+            The expected SHA-256 checksum of the certificate. Required if `verifyChecksum` is True.
+            Also will force the verification of the checksum. Default is None.
 
         Returns
         -------
         None
-            This method does not return any value.
 
         Example
         -------
         >>> self._certificateFetch()
-        INFO:root:Successfully fetched certificate and saved.
+        >>> ->> [15.07.2024 12:00:00][Certificate] Certificate does not exist. Fetching it.
         """
+        if preCalcChecksum:
+            verifyChecksum = True
+
         if self.pathExists(self.certificatePath):
             self.verify = self.certificatePath
+            self._logMessage("Certificate exists and setting it to use.", "debug", "Certificate")
             if not force:
                 return
-
-        response = self.makeRequest(self.certificateURL, method="GET")
-        if response.status_code == 200:
-            with open(self.certificatePath, "wb") as f:
-                f.write(response.content)
-            if hasattr(self, "logger"):
-                self.logger.info("Successfully fetched certificate and saved.")
-            self.verify = self.certificatePath
         else:
-            if hasattr(self, "logger"):
-                self.logger.error(
-                    f"Failed to fetch certificate. Status code: {response.status_code}. Cannot use SSL but the program might work."
-                )
+            self._logMessage("Certificate does not exist. Fetching it.", "debug", "Certificate")
+
+        def fetchChecksum():
+            try:
+                self._logMessage("Fetching checksum of the certificate.", "info", "Certificate")
+                response = self.makeRequest('https://curl.se/ca/cacert.pem.sha256')
+                if response.status_code == 200:
+                    checksum = response.text.split()
+                    if len(checksum) == 2:
+                        return checksum[0]
+                    self._logMessage("Unexpected checksum format.", "error", "Certificate")
+            except Exception as e:
+                self._logMessage(f"Exception occurred while fetching checksum: {e}", "error", "Certificate")
+            return None
+
+        def verifyCertificate(content, expectedChecksum):
+            sha256Hash = sha256()
+            sha256Hash.update(content)
+            calculatedHash = sha256Hash.hexdigest()
+            self._logMessage(f"Calculated checksum: {calculatedHash}", "debug", "Certificate")
+            self._logMessage(f"Expected checksum: {expectedChecksum}", "debug", "Certificate")
+            return calculatedHash == expectedChecksum
+        try:
+            response = self.makeRequest(self.certificateURL, method="GET")
+            if response.status_code == 200:
+                content = response.content
+                if verifyChecksum:
+                    if preCalcChecksum:
+                        expectedChecksum = preCalcChecksum
+                    else:
+                        expectedChecksum = fetchChecksum()
+                    if expectedChecksum:
+                        if not verifyCertificate(content, expectedChecksum):
+                            self._logMessage("Checksum verification failed.", "error", "Certificate")
+                            return
+                        else:
+                            self._logMessage("Checksum verification successful.", "info", "Certificate")
+                    else:
+                        self._logMessage("Failed to obtain expected checksum.", "error", "Certificate")
+                        return
+                if not content:
+                    self._logMessage("Fetched certificate is empty.", "error", "Certificate")
+                    return
+                with open(self.certificatePath, "wb") as f:
+                    f.write(content)
+                self._logMessage("Successfully fetched certificate and saved.", "info", "Certificate")
+                self.verify = self.certificatePath
+        except Exception as e:
+            self._logMessage(
+                f"Failed to fetch certificate. Cannot use SSL but the program might work.\n{e}", "error", "Certificate"
+            )
             self.verify = False
 
-    def _certificateSet(self) -> bool:
+    def _certificateSet(self) -> Union[bool, str]:
         """
         Sets the certificate path if not in unsafe mode and the certificate file exists.
 
@@ -327,20 +388,17 @@ class SecureRequests:
 
         Returns
         -------
-        bool
-            Path to the certificate if not in unsafe mode and the file exists; otherwise, False.
-
-        Example
-        -------
         >>> self._certificateSet()
-        '/path/to/certificate.pem'  # if certificate is set
-        False                        # if certificate is not set or in unsafe mode
+        >>> '/path/to/certificate.pem'   # if certificate is set
+        >>> False                        # if certificate is not set or in unsafe mode
         """
-        return (
+        certificateStatus = (
             self.certificatePath
             if not self.unsafe and self.pathExists(self.certificatePath)
             else False
         )
+        self._logMessage(f"Setting certificate. Status: {certificateStatus}", "debug", "Certificate")
+        return certificateStatus
 
     # ***********************************************************************************************************************
     # *                                                       Request Logic                                                 *
@@ -427,19 +485,21 @@ class SecureRequests:
         """
         if hasattr(self, "logger"):
             timestamp = self.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            safetyStatus = "[UNSAFE]" if self.unsafe else "[SAFE]"
+            safetyStatus = "[UNSAFE]" if not self.verify else "[SAFE]"
             tlsStatus = "[TLS]" if self.useTLS else "[NO TLS]"
             logExtra = f' with headers {kwargs.get("headers")} and params {kwargs}' if self.logExtensive else ''
             logDefaults = f' with Status Code {response.status_code} - {response.reason}'
             logBase = f'[{timestamp}]{safetyStatus}{tlsStatus} {method} request to {url}{logExtra}{logDefaults}'
-            self.logger.info(logBase)
+            if response.status_code == 200:
+                self.logger.info(logBase)
+            else:
+                self.logger.error(logBase)
 
     # ***********************************************************************************************************************
     # *                                                 Header Related Stuff                                                *
     # ***********************************************************************************************************************
 
-    @staticmethod
-    def headerGenerate(customHeaders: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
+    def headerGenerate(self, customHeaders: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
         """
         Generates headers for the session with optional custom values.
 
@@ -544,8 +604,9 @@ class SecureRequests:
         for key, value in customHeaders.items():
             if key not in headers:
                 headers[key] = value
-
+        self._logMessage(f"[Header] Generated headers: {headers}", "debug", "Header")
         return headers
+    
 
     def headerSetKey(self, key: HeaderKeys, value: str) -> None:
         """
@@ -570,6 +631,7 @@ class SecureRequests:
         {'Content-Type': 'application/json', 'Authorization': 'Bearer token123'}
         """
         self.headers[key.value] = value
+        self._logMessage(f"Set {key} to {value}", "debug", "Header")
 
     def headerRemoveKey(self, key: HeaderKeys) -> None:
         """
@@ -593,6 +655,7 @@ class SecureRequests:
         """
         if key.value in self.headers:
             del self.headers[key.value]
+            self._logMessage(f"{key} removed from headers.", "debug", "Header")
 
     def headerUpdateMultiple(self, newHeader: Dict[HeaderKeys, str]) -> None:
         """

@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: secureRequests
-Version: 1.0.2
+Version: 1.1.0
 Summary: A simple library designed to make secure HTTP requests more widespread with flexibility in SSL certificate management. Requests use a TSL Adapter and allow easy request execution and configuration with SSLContext and Certificates. Also wraps good practice around the general use of requests. 
 Home-page: https://github.com/JulianStiebler/secureRequests
 Author: Julian Stiebler

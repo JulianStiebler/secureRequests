@@ -16,10 +16,15 @@ This library wraps a TSL Adapter around the session.request-methods and helps wi
 
 ![Badge Last Commit][Badge Last Commit] ![Badge Security Policy][Badge Security Policy] ![Badge Open Issues][Badge Open Issues] ![Badge Open Pull Requests][Badge Open Pull Requests] ![Badge Contributors][Badge Contributors]
 
-## Table of Contents
+---
 
-- [Wiki & Documentation](https://github.com/JulianStiebler/secureRequests/wiki)
-- [Unit Test Results](https://github.com/JulianStiebler/secureRequests/blob/main/unitTest/unitTestResults.md)
+## Resources
+- [Wiki & Documentation][Resource Wiki]
+- [Unit Test Results][MD UnitTestResult]
+- [Roadmap][MD Roadmap]
+
+---
+## Table of Contents
 - [General Information](#general-information)
   - [Example](#example)
   - [Features](#features)
@@ -143,3 +148,12 @@ pip install .
 [Badge Downloads]: https://img.shields.io/github/downloads/JulianStiebler/secureRequests/total?style=for-the-badge&logo=empty
 [Badge License]: https://img.shields.io/github/license/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 
+<!-- Aliases for Files -->
+[MD Security]: ./security.md
+[MD UnitTestResult]: ./unitTest/unitTestResults.md
+[MD Roadmap]: ./ROADMAP.md
+[MD Contributing]: ./CONTRIBUTING.md
+
+
+<!-- Other Aliases -->
+[Resource Wiki]: https://github.com/JulianStiebler/secureRequests/wiki
