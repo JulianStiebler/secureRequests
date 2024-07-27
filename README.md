@@ -19,7 +19,7 @@ This library wraps a TSL Adapter around the session.request-methods and helps wi
 ## Table of Contents
 
 - [Wiki & Documentation](https://github.com/JulianStiebler/secureRequests/wiki)
-- [Unit Test Markdown](https://github.com/JulianStiebler/secureRequests/blob/main/unitTest/unitTestResults.md)
+- [Unit Test Results](https://github.com/JulianStiebler/secureRequests/blob/main/unitTest/unitTestResults.md)
 - [General Information](#general-information)
   - [Example](#example)
   - [Features](#features)

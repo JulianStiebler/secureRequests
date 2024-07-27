@@ -18,7 +18,11 @@ used in web applications.
 
 from enum import Enum
 
-class HeaderKeys(Enum):
+class Serializer():
+    def __str__(self):
+        return self.value
+
+class HeaderKeys(Serializer, Enum):
     """
     This enum holds available enumeration keys for standard HTTP headers.
         ACCEPT, ACCEPT_ENCODING, ACCEPT_LANGUAGE, ACCESS_CONTROL_ALLOW_HEADERS,
@@ -214,7 +218,7 @@ class HeaderKeys(Enum):
     X_XSS_PROTECTION = "X-XSS-Protection"  # Controls browser XSS protection.
     # More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/X-XSS-Protection
 
-class CookieKeys(Enum):
+class CookieKeys(Serializer, Enum):
     """
     This enum holds available enumeration keys for standard cookie keys.
         SESSION_ID, USER_PREFERENCES, AUTH_TOKEN, CSRF_TOKEN, TRACKING_ID,
@@ -349,8 +353,11 @@ class CookieKeys(Enum):
 
     LOGIN_METHOD = "login_method"  # Method used for logging in.
     # More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
-# test
-class CookieAttributeKeys(Enum):
+
+    def __str__(self):
+        return self.value
+
+class CookieAttributeKeys(Serializer, Enum):
     """
     This enum holds available enumeration keys for cookie attributes used in HTTP headers.
         DOMAIN, PATH, EXPIRES, SECURE, HTTP_ONLY, SAME_SITE, MAX_AGE, PRIORITY, SAME_PARTY, PARTITIONED, EXTENSION
@@ -387,3 +394,6 @@ class CookieAttributeKeys(Enum):
 
     EXTENSION = 'extension'  # Any other extension attributes for the cookie.
     # More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#extension
+
+    def __str__(self):
+        return self.value

@@ -1,8 +1,4 @@
 """
-MIT License
-
-...
-
 # Created: 15.07.2024
 # Last edited: 17.07.2024
 """
@@ -12,7 +8,6 @@ import sys
 import os
 import logging
 from unittest.mock import patch, MagicMock
-from datetime import datetime, timedelta
 import io
 import traceback
 
@@ -23,16 +18,27 @@ from secureRequests import SecureRequests
 from secureRequests.secureRequestsDecorators import STATUS_CODE_EXCEPTION_MAP
 from secureRequests import HeaderKeys, CookieAttributeKeys, CookieKeys
 
-def formatHeaders(headers):
-    """Format headers dictionary into a string with proper indentation and line breaks."""
-    if not headers:
-        return "None"
-    return "\n".join([f" > {key}: {value}" for key, value in headers.items()])
+def formatDict(inputDict=None, ignoredKeys=None):
+    """
+    Format a dictionary into a string with proper indentation and line breaks.
+
+    Args:
+        inputDict (dict): The dictionary to format.
+        ignoredKeys (list, optional): List of keys to filter out from the dictionary. Defaults to None.
+
+    Returns:
+        str: The formatted string.
+    """
+    if ignoredKeys:
+        result = "\n".join([f" > {key}: {value}" for key, value in inputDict.items() if key not in ignoredKeys])
+    else:
+        result = "\n".join([f" > {key}: {value}" for key, value in inputDict.items()])
+    return result
 
 def formatCookies(cookies):
     """Format cookies dictionary into a string with proper indentation and line breaks."""
     if not cookies:
-        return "."
+        return "No cookies used."
     
     formattedCookies = []
     for key, attributes in cookies.items():
@@ -119,6 +125,9 @@ class CustomTestRunner(unittest.TextTestRunner):
         """Generate a markdown report of the test results."""
         with open("unitTest/unitTestResults.md", "w") as reportFile:
             reportFile.write("# unitTest\n\n")
+            reportFile.write("> **Note:** This report was generated automatically by the unit test suite.")
+            reportFile.write("Log output with timestamps resemble the logging of the real request as it would go down in the .log file.")
+            reportFile.write("\n---\n")
             reportFile.write("## Table of Contents\n\n")
             reportFile.write("- [Failing](#failing)\n")
             for test, _ in result.failedTests:
@@ -143,12 +152,6 @@ class CustomTestRunner(unittest.TextTestRunner):
         testName = test._testMethodName
         output.append(f"### {testName}\n")
         output.append(f"<a name=\"{testName.lower()}\"></a>\n")
-        output.append("#### Configurations\n")
-
-        # Extracting configurations from the test instance
-        config = self._extractConfig(test)
-        for key, value in config.items():
-            output.append(f"- {key}: {value}\n")
 
         output.append("#### Result\n")
         if status == "Passing":
@@ -163,12 +166,6 @@ class CustomTestRunner(unittest.TextTestRunner):
             output.append('---')
         return "\n".join(output) + "\n"
 
-    def _extractConfig(self, test):
-        """Extract configurations from the test instance."""
-        if hasattr(test, 'test_config'):
-            return test.test_config
-        return {}
-
 class TestSecureRequests(unittest.TestCase):
     def setUp(self):
         """
@@ -179,221 +176,64 @@ class TestSecureRequests(unittest.TestCase):
         self.statusCodes = STATUS_CODE_EXCEPTION_MAP
         self.failures = []
         self.logStream = io.StringIO()
-        logging.basicConfig(stream=self.logStream, level=logging.INFO)
+        self.methods = ['get', 'post', 'put', 'delete', 'patch']
+        self.testURL = 'https://httpbin.org'
+        self.defaultHeader = {
+            HeaderKeys.ACCEPT.value: "application/x-www-form-urlencoded",
+            HeaderKeys.CONTENT_TYPE.value: "application/x-www-form-urlencoded",
+            HeaderKeys.SEC_CH_UA.value: '"Google Chrome";v="110", "Chromium";v="110", "Not.A/Brand";v="24"',
+            HeaderKeys.SEC_CH_UA_MOBILE.value: "?0",
+            HeaderKeys.SEC_CH_UA_PLATFORM.value: '"Windows"',
+            HeaderKeys.SEC_FETCH_DEST.value: "empty",
+            HeaderKeys.SEC_FETCH_MODE.value: "cors",
+            HeaderKeys.SEC_FETCH_SITE.value: "same-site",
+            HeaderKeys.USER_AGENT.value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+        }
+        logging.basicConfig(stream=self.logStream, level=logging.DEBUG)
 
-    def configsSAFE(self):
+    def integrationConfig(self):
         """
         Returns a list of safe configuration dictionaries for SecureRequests.
-        These configurations ensure that the requests are made securely.
         """
         return [
-            {'certificateNeedFetch': False, 'unsafe': False, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
-            {'certificateNeedFetch': False, 'unsafe': False, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
-            {'certificateNeedFetch': True, 'unsafe': False, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
             {'certificateNeedFetch': True, 'unsafe': False, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
+            {'certificateNeedFetch': False, 'unsafe': True, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False}
         ]
-
-    def configsUNSAFE(self):
+    
+    def initConfig(self):
         """
-        Returns a list of unsafe configuration dictionaries for SecureRequests.
-        These configurations are intentionally set up to test insecure requests.
+        Returns a list of init configuration dictionaries for SecureRequests.
         """
         return [
-            {'certificateNeedFetch': False, 'unsafe': True, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
-            {'certificateNeedFetch': False, 'unsafe': True, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
-            {'certificateNeedFetch': True, 'unsafe': True, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
-            {'certificateNeedFetch': True, 'unsafe': True, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
+            {'certificateNeedFetch': True, 'unsafe': False, 'useTLS': True, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False},
+            {'certificateNeedFetch': True, 'unsafe': True, 'useTLS': False, 'logToFile': True, 'logPath': "unitTest/unitTest.log", 'suppressWarnings': False}
         ]
 
-    @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
-    def test_HTTPMethods_SAFE(self, srRequestMock):
+    def test_HTTPMethods_integration(self):
         """
-        Test HTTP methods (GET, POST, PUT, DELETE, PATCH) with safe configurations.
-        Checks the response status codes 200 and 400 for each method.
+        Integration Test HTTP methods (GET, POST, PUT, DELETE, PATCH) for specific configurations.
         """
-        config = self.configsSAFE()[1]
-        srRequest = SecureRequests(**config)
-        methods = ['get', 'post', 'put', 'delete', 'patch']
-        for method in methods:
-            with self.subTest(method=method):
-                logging.info('------------------------------------------------------------')
-                mockResponse = MagicMock()
-                logging.info('>>> Testing Status Code 200 <<<')
-                mockResponse.status_code = 200
-                srRequestMock.return_value = mockResponse
-                response = srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 200)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 200.")
 
-                logging.info('\n>>> Testing Status Code 400 <<<')
-                mockResponse.status_code = 400
-                mockResponse.reason = "Bad Request"
-                mockResponse.text = "Mocked response for status code 400"
-                srRequestMock.return_value = mockResponse
+        for config in self.integrationConfig():
+            srRequest = SecureRequests(**config)
+            statusSafe = "[SAFE]" if not config['unsafe'] else "[UNSAFE]"
+            statusTLS = "[USE TLS]" if config['useTLS'] else "[NO TLS]"
+            
+            logging.info('------------------------------------------------------------')
+            logging.info('>>> Testing HTTP Methods with Config <<<')
+            logging.info(f'{formatDict(config, ignoredKeys=["logPath", "logToFile", "suppressWarnings"])}\n')
 
-                srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 400.")
-                logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatHeaders(srRequest.headers)}\n')
+            for method in self.methods:
+                with self.subTest(config=config, method=method):
+                    try:
+                        response = srRequest.makeRequest(self.testURL + f'/{method}', method=method.upper())
+                        self.assertEqual(response.status_code, 200)
+                        logging.info(f"[PASS]{statusSafe}{statusTLS} {method.upper()} request to {self.testURL}/{method} with status code {response.status_code}.")
+                    except Exception as e:
+                        self.fail(f"[FAIL]{statusSafe}{statusTLS} {method.upper()} request to {self.testURL}/{method} failed with exception: {e}")
 
-        self.test_config = config
-
-    @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
-    def test_HTTPMethods_Cookies_SAFE(self, srRequestMock):
-        """
-        Test HTTP methods with cookies and safe configurations.
-        Checks the response status codes 200 and 400 for each method.
-        """
-        config = self.configsSAFE()[1]
-        srRequest = SecureRequests(**config)
-        srRequest.cookieUpdate(CookieKeys.SESSION_ID, {
-            CookieAttributeKeys.PATH: '/',
-            CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
-            CookieAttributeKeys.SECURE: True
-        })
-        srRequest.headerGenerate(customHeaders={HeaderKeys.CONTENT_TYPE: "application/json"})
-
-        methods = ['get', 'post', 'put', 'delete', 'patch']
-        for method in methods:
-            with self.subTest(method=method):
-                logging.info('------------------------------------------------------------')
-                logging.info('>>> Testing Status Code 200 <<<')
-                # Test with status code 200
-                mockResponse = MagicMock()
-                mockResponse.status_code = 200
-                srRequestMock.return_value = mockResponse
-
-                response = srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 200)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 200.\n")
-
-                logging.info('\n>>> Testing Status Code 400')
-                # Test with status code 400
-                mockResponse.status_code = 400
-                mockResponse.reason = "Bad Request"
-                mockResponse.text = "Mocked response for status code 400"
-                srRequestMock.return_value = mockResponse
-
-                srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 400)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 400.")
-                logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatHeaders(srRequest.headers)}\n')
-
-        self.test_config = config
-
-    @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
-    def test_HTTPMethods_Cookies_UNSAFE(self, srRequestMock):
-        """
-        Test HTTP methods with cookies and unsafe configurations.
-        Checks the response status codes 200 and 400 for each method.
-        """
-        config = self.configsUNSAFE()[0]
-        srRequest = SecureRequests(**config)
-        srRequest.cookieUpdate(CookieKeys.SESSION_ID, {
-            CookieAttributeKeys.PATH: '/',
-            CookieAttributeKeys.EXPIRES: datetime.now() + timedelta(days=7),
-            CookieAttributeKeys.SECURE: True
-        })
-        methods = ['get', 'post', 'put', 'delete', 'patch']
-        srRequest.headerGenerate(customHeaders={HeaderKeys.CONTENT_TYPE: "application/json"})
-        for method in methods:
-            with self.subTest(method=method):
-                # Test with status code 200
-                logging.info('------------------------------------------------------------')
-                logging.info('>>> Testing Status Code 200 <<<')
-                mockResponse = MagicMock()
-                mockResponse.status_code = 200
-                srRequestMock.return_value = mockResponse
-
-                response = srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 200)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 200.")
-
-                # Test with status code 400
-                logging.info('>>> Testing Status Code 400 <<<')
-                mockResponse.status_code = 400
-                mockResponse.reason = "Bad Request"
-                mockResponse.text = "Mocked response for status code 400"
-                srRequestMock.return_value = mockResponse
-
-                srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 400)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 400.")
-                logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatHeaders(srRequest.headers)}\n')
-
-        self.test_config = config
-
-    @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
-    def test_HTTPMethods_UNSAFE(self, srRequestMock):
-        """
-        Test HTTP methods (GET, POST, PUT, DELETE, PATCH) with unsafe configurations.
-        Checks the response status codes 200 and 400 for each method.
-        """
-        config = self.configsUNSAFE()[0]
-        srRequest = SecureRequests(**config)
-        methods = ['get', 'post', 'put', 'delete', 'patch']
-        for method in methods:
-            with self.subTest(method=method):
-                logging.info('------------------------------------------------------------')
-                logging.info('>>> Testing Status Code 200 <<<')
-                mockResponse = MagicMock()
-                mockResponse.status_code = 200
-                srRequestMock.return_value = mockResponse
-
-                response = srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 200)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 200.")
-
-                logging.info('>>> Testing Status Code 400 <<<')
-                mockResponse.status_code = 400
-                mockResponse.reason = "Bad Request"
-                mockResponse.text = "Mocked response for status code 400"
-                srRequestMock.return_value = mockResponse
-
-                srRequest.makeRequest(self.baseURL + f'/{method.upper()}', method=method.upper())
-                self.assertEqual(response.status_code, 400)
-                logging.info(f"[PASS][SAFE] {method.upper()} request to {self.baseURL}/{method.upper()} with status code 400.")
-                logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatHeaders(srRequest.headers)}\n')
-
-        self.test_config = config
-
-    def test_fetchCertOnInit_SAFE(self):
-        """
-        Test certificate fetching on initialization with safe configurations.
-        Checks if the certificate file exists and is valid.
-        """
-        config = self.configsSAFE()[2]
-        srRequest = SecureRequests(**config)
-        if config['certificateNeedFetch']:
-            self.assertTrue(srRequest.verify)
-            self.assertTrue(srRequest.verify.endswith('.pem'))
-            self.assertTrue(os.path.exists(srRequest.verify))
-            with open(srRequest.verify, 'rb') as f:
-                pemContent = f.read()
-            self.assertTrue(pemContent, "PEM file content should not be empty")
-        else:
-            self.assertFalse(srRequest.verify)
-        logging.info(f"[PASS][SAFE] Initialization with certificateNeedFetch: {config['certificateNeedFetch']}")
-        self.test_config = config
-
-    def test_fetchCertOnInit_UNSAFE(self):
-        """
-        Test certificate fetching on initialization with unsafe configurations.
-        Checks if the certificate file exists and is valid.
-        """
-        config = self.configsUNSAFE()[2]
-        srRequest = SecureRequests(**config)
-
-        if config['certificateNeedFetch']:
-            self.assertTrue(os.path.exists(srRequest.certificatePath), f"{srRequest.certificatePath} should exist")
-            with open(srRequest.certificatePath, 'rb') as f:
-                pemContent = f.read()
-            self.assertTrue(pemContent, "PEM file content should not be empty")
-        else:
-            self.assertFalse(os.path.exists(srRequest.certificatePath), f"{srRequest.certificatePath} should not exist")
-
-        self.assertFalse(srRequest.verify, "verify should be False for unsafe configuration")
-        logging.info(f"[PASS][UNSAFE] Initialization with certificateNeedFetch: {config['certificateNeedFetch']}")
-        self.test_config = config
+            # Universal cookies and headers logging
+            logging.info(f'\n- Used Cookies: {formatCookies(srRequest.cookieGetAll())}.\n- Used Header:\n{formatDict(srRequest.headers)}\n')
 
     @patch('secureRequests.secureRequests.SecureRequests.makeRequest')
     def test_mockStatusCodes(self, srRequestMock):
@@ -401,31 +241,171 @@ class TestSecureRequests(unittest.TestCase):
         Test handling of different HTTP status codes.
         Ensures the appropriate exceptions are raised for each status code.
         """
-        config = self.configsSAFE()[1]
+        config = self.integrationConfig()[0]
         srRequest = SecureRequests(**config)
-        
+
         for statusCode, exception in self.statusCodes.items():
             with self.subTest(status_code=statusCode, config=config):
                 mockResponse = MagicMock()
                 mockResponse.status_code = statusCode
-                mockResponse.reason = f"Reason for {statusCode}"
-                mockResponse.text = f"Mocked response for status code {statusCode}"
                 
                 # Modify the return value to raise the appropriate exception
-                srRequestMock.side_effect = exception(f"{statusCode} Error: Reason for {statusCode} - Mocked response for status code {statusCode}")
+                srRequestMock.side_effect = exception(f"Mocked response for status code {statusCode}")
 
                 try:
                     srRequest.makeRequest(self.baseURL + f'/status/{statusCode}')
                 except exception:
                     # Log the successful raising of the expected exception
-                    logging.info(f"[PASS] {exception.__name__} raised for status code {statusCode} with config: {config}")
+                    logging.info(f"[PASS] {exception.__name__} raised for status code {statusCode}.")
                 else:
                     # Log the failure if the exception was not raised
                     message = f"{exception.__name__} not raised for status code {statusCode}"
-                    self.logFailure(self.test_mockStatusCodes.__name__, config, message)
                     raise AssertionError(message)
 
-        self.test_config = config
+    def test_fetchCertOnInit(self):
+        """
+        Test certificate fetching on initialization with safe configurations.
+        Checks if the certificate file exists and is valid.
+        """
+        for config in self.initConfig():
+            safeStatus = "[SAFE]" if not config['unsafe'] else "[UNSAFE]"
+            try:
+                srRequest = SecureRequests(**config)
+
+                if config["unsafe"]:
+                    logging.info(f"[PASS]{safeStatus} Fetched certificate on initialization with certificateNeedFetch: True")
+                    self.assertTrue(os.path.exists(srRequest.verify))
+                    logging.info(f"[PASS]{safeStatus} Verified path exists.")
+                    self.assertFalse(srRequest.verify)
+                    logging.info(f"[PASS]{safeStatus} Verified we are not using it.\n")
+
+                else:
+                    logging.info(f"[PASS]{safeStatus} Fetched certificate on initialization with certificateNeedFetch: True")
+                    self.assertTrue(os.path.exists(srRequest.verify))
+                    logging.info(f"[PASS]{safeStatus} Verified path exists.")
+                    self.assertTrue(srRequest.verify.endswith('.pem'))
+                    logging.info(f"[PASS]{safeStatus} Verified we are using it.")
+                    with open(srRequest.verify, 'rb') as f:
+                        pemContent = f.read()
+                    self.assertTrue(pemContent, "PEM file content should not be empty")
+                    logging.info(f"[PASS]{safeStatus} Verified its not empty.")
+            except Exception as e:
+                self.fail(f"[FAIL]{safeStatus} Initialization with certificateNeedFetch: True \nSomething went wrong: {e}")
+
+    def test_HeadersBasicAuth(self):
+        """
+        Test Basic Authentication Header with https://postman-echo.com/basic-auth.
+        """
+        for config in self.integrationConfig():
+            srRequest = SecureRequests(headers={HeaderKeys.AUTHORIZATION.value: "Basic cG9zdG1hbjpwYXNzd29yZA=="}, **config)
+            statusSafe = "[SAFE]" if not config['unsafe'] else "[UNSAFE]"
+            statusTLS = "[USE TLS]" if config['useTLS'] else "[NO TLS]"
+
+            logging.info('------------------------------------------------------------')
+            logging.info('>>> Testing Basic Auth with Config <<<')
+            logging.info(f'{formatDict(config, ignoredKeys=["logPath", "logToFile", "suppressWarnings"])}\n')
+
+            try:
+                response = srRequest.makeRequest('https://postman-echo.com/basic-auth')
+                self.assertEqual(response.status_code, 200, f"[FAIL]{statusSafe}{statusTLS} Request to https://postman-echo.com/basic-auth failed with status code {response.status_code}.")
+                logging.info(f"[PASS]{statusSafe}{statusTLS} Request to https://postman-echo.com/basic-auth with status code {response.status_code}.")
+            except Exception as e:
+                self.fail(f"[FAIL]{statusSafe}{statusTLS} Request to https://postman-echo.com/basic-auth failed with exception: {e}")
+            
+        logging.info(f'\n- Used Cookies: None.\n- Used Header:\n{formatDict(srRequest.headers)}\n')
+
+    def test_HeaderLogics(self):
+        # Mock random.choice to return the first element for predictability
+        config = self.integrationConfig()[0]
+        with patch('random.choice', side_effect=lambda x: x[0]):
+            # Initialize without headers
+            srRequest = SecureRequests(**config)
+            self.assertEqual(srRequest.headers, self.defaultHeader)
+            logging.info("[PASS] Initialization without headers matches default headers.")
+
+            # Initialize with headers
+            customHeaders = {HeaderKeys.AUTHORIZATION.value: "Basic cG9zdG1hbjpwYXNzd29yZA=="}
+            srRequest = SecureRequests(headers=customHeaders, **config)
+            expected_headers = self.defaultHeader.copy()
+            expected_headers.update(customHeaders)
+            self.assertEqual(srRequest.headers, expected_headers)
+            logging.info("[PASS] Initialization with custom headers.")
+
+            # Test headerSetKey
+            srRequest.headerSetKey(HeaderKeys.ORIGIN, "http://example.com")
+            expected_headers[HeaderKeys.ORIGIN.value] = "http://example.com"
+            self.assertEqual(srRequest.headers[HeaderKeys.ORIGIN.value], "http://example.com")
+            logging.info("[PASS] headerSetKey added the key.")
+
+            # Test headerGenerate with customHeaders
+            customHeaders = {HeaderKeys.ACCEPT.value: "application/json", HeaderKeys.AUTHORIZATION.value: "test"}
+            generated_headers = srRequest.headerGenerate(customHeaders)
+            expected_generated_headers = self.defaultHeader.copy()
+            expected_generated_headers.update(customHeaders)
+            self.assertEqual(generated_headers, expected_generated_headers)
+            logging.info("[PASS] headerGenerate with customHeaders.")
+
+            # Test headerRemoveKey
+            srRequest.headerRemoveKey(HeaderKeys.ORIGIN)
+            del expected_headers[HeaderKeys.ORIGIN.value]
+            self.assertNotIn(HeaderKeys.ORIGIN.value, srRequest.headers)
+            logging.info("[PASS] headerRemoveKey removed the key.")
+
+            # Test headerRemoveMultiple
+            keys_to_remove = [HeaderKeys.ACCEPT, HeaderKeys.AUTHORIZATION]
+            srRequest.headerRemoveMultiple(keys_to_remove)
+            for key in keys_to_remove:
+                del expected_headers[key.value]
+                self.assertNotIn(key.value, srRequest.headers)
+            logging.info("[PASS] headerRemoveMultiple removed the keys.")
+
+    def test_CookiesLogics(self):
+        config = self.integrationConfig()[0]
+        with patch('random.choice', side_effect=lambda x: x[0]):
+            # Initialize SecureRequests
+            srRequest = SecureRequests(**config)
+
+            # Test cookieUpdate
+            cookie_info = {
+                CookieAttributeKeys.PATH: "/",
+                CookieAttributeKeys.SECURE: True,
+                CookieAttributeKeys.EXPIRES: "Wed, 09 Jun 2021 10:18:14 GMT"
+            }
+            srRequest.cookieUpdate(CookieKeys.SESSION_ID, cookie_info)
+            expected_cookie_value = srRequest._serializeCookieInfo(cookie_info)
+            self.assertEqual(srRequest.session.cookies.get(CookieKeys.SESSION_ID.value), expected_cookie_value)
+            logging.info("[PASS] cookieUpdate added the cookie.")
+
+            # Test cookieGet
+            retrieved_cookie_info = srRequest.cookieGet(CookieKeys.SESSION_ID)
+            for key in cookie_info:
+                self.assertIn(key, retrieved_cookie_info)
+                self.assertEqual(str(retrieved_cookie_info[key]), str(cookie_info[key]))
+            logging.info("[PASS] cookieGet retrieved the correct cookie info.")
+
+            # Test cookieRemove
+            srRequest.cookieRemove(CookieKeys.SESSION_ID)
+            self.assertIsNone(srRequest.session.cookies.get(CookieKeys.SESSION_ID.value))
+            logging.info("[PASS] cookieRemove removed the cookie.")
+
+            # Test cookieUpdateMultiple
+            multiple_cookies = {
+                CookieKeys.SESSION_ID: {
+                    CookieAttributeKeys.PATH: "/",
+                    CookieAttributeKeys.SECURE: True,
+                    CookieAttributeKeys.EXPIRES: "Wed, 09 Jun 2021 10:18:14 GMT"
+                },
+                CookieKeys.USER_ID: {
+                    CookieAttributeKeys.PATH: "/user",
+                    CookieAttributeKeys.SECURE: False,
+                    CookieAttributeKeys.EXPIRES: "Wed, 09 Jun 2022 10:18:14 GMT"
+                }
+            }
+            srRequest.cookieUpdateMultiple(multiple_cookies)
+            for key, info in multiple_cookies.items():
+                expected_value = srRequest._serializeCookieInfo(info)
+                self.assertEqual(srRequest.session.cookies.get(key.value), expected_value)
+            logging.info("[PASS] cookieUpdateMultiple added multiple cookies.")
 
 if __name__ == "__main__":
     unittest.main(testRunner=CustomTestRunner())
