@@ -381,7 +381,7 @@ class SecureRequests:
             self._logMessage("Certificate does not exist. Fetching it.", "critical", "Certificate")
 
         try:
-            response = self.makeRequest(self.certificateURL, method="GET", redactURL=True)
+            response = self.makeRequest(self.certificateURL, method="GET")
             if response.status_code == 200:
                 content = response.content
                 # If checksum verification is enabled, fetch the checksum and verify it
@@ -568,8 +568,6 @@ class SecureRequests:
         response = srMethods[method](
             url=url, headers=headers, verify=self.verify, **kwargs
         )
-        if redactURL:
-            url = "[REDACTED]"
         self._logRequest(method, url, response=response, headers=headers)
         return response
 
