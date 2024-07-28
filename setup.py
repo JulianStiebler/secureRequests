@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="secureRequests",
-    version="1.0.2",
+    version="1.1.0",
     author="Julian Stiebler",
     description="A simple library designed to make secure HTTP requests more widespread with flexibility in SSL certificate management. Requests use a TSL Adapter and allow easy request execution and configuration with SSLContext and Certificates. Also wraps good practice around the general use of requests. ",
     long_description=open("README.md").read(),
