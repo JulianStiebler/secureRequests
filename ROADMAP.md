@@ -1,0 +1,6 @@
+- getFile Function
+  - That also provides a easy way to verify the opposing checksum and compare to given integrity value
+- Certificate
+  - detect changes on specified certificate root
+  - allow passing in of `certbot` and use it rather than remote source
+  - implement force fetch

@@ -55,6 +55,7 @@ class Config:
         setLogExtensive: Set the logExtensive configuration.
         setSilent: Set the silent configuration.
         setSuppressWarnings: Set the suppressWarnings configuration.
+        setCertificateVerifyChecksum: Set the certificateVerifyChecksum configuration.
         getUseTLS: Get the useTLS configuration.
         getUnsafe: Get the unsafe configuration.
         getCertificateNeedFetch: Get the certificateNeedFetch configuration.
@@ -66,6 +67,7 @@ class Config:
         getLogExtensive: Get the logExtensive configuration.
         getSilent: Get the silent configuration.
         getSuppressWarnings: Get the suppressWarnings configuration.
+        getCertificateVerifyChecksum: Get the certificateVerifyChecksum configuration.
     """
     def __init__(self) -> None:
         """
@@ -80,6 +82,7 @@ class Config:
             - certificateNeedFetch
             - certificateURL
             - certificatePath
+            - certificateVerifyChecksum
             - logToFile
             - logLevel
             - logPath
@@ -110,7 +113,7 @@ class Config:
         self.certificatePath: str = "cacert.pem" if not self.useEVar else os.getenv(self.envVars['certificatePath'], "cacert.pem")
         self.certificateVerifyChecksum: bool = False if not self.useEVar else self.__getEnvBool('certificateVerifyChecksum', False)
         self.logToFile: bool = False if not self.useEVar else self.__getEnvBool('logToFile', False)
-        self.logLevel: Union[int, str] = logging.DEBUG if not self.useEVar else os.getenv(self.envVars['logLevel'], logging.INFO)
+        self.logLevel: Union[int, str] = logging.DEBUG if not self.useEVar else os.getenv(self.envVars['logLevel'], logging.DEBUG)
         self.logPath: str = "secureRequests.log" if not self.useEVar else os.getenv(self.envVars['logPath'], "secureRequests.log")
         self.logExtensive: bool = False if not self.useEVar else self.__getEnvBool('logExtensive', False)
         self.silent: bool = False if not self.useEVar else self.__getEnvBool('silent', False)

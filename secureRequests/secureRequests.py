@@ -163,14 +163,19 @@ class SecureRequests:
     logger : logging.Logger
         The logger object for logging messages. Only available if `logToFile` is set to True.
         Named 'SecureRequests'
+    verify : Union[bool, str]
+        The path to the SSL certificate file or False if not using SSL.
 
     Methods
     -------
+    _certificateFetch(self, force:bool=False, verifyChecksum:Union[bool, str]=False) -> None:
+        Fetches the SSL certificate if required. 
+        Optionally verifies the checksum of the fetched certificate, given a string - or if True, fetches the checksum file from curl.se.
     makeRequest(url:str, method:str = "GET", headers:Optional[Dict[str, str]] = None, **kwargs) -> requests.Response:
         Makes an HTTP request with the specified parameters.
     _logRequest(method:str, url:str, response:requests.Response, **kwargs:Any) -> None:
         Logs an HTTP request and response details.
-    def _logMessage(message:str, level:Union[str, int]="DEBUG", category:str = ""):
+    _logMessage(message:str, level:Union[str, int]="DEBUG", category:str = ""):
         Logs a message with the specified logging level and category.
     headerGenerate(customHeaders: Optional[Dict[str, Any]] = None) -> Dict[str, str]:
         Generates default headers with optional custom values.
@@ -182,7 +187,7 @@ class SecureRequests:
         Updates multiple headers based on the provided dictionary.
     headerRemoveMultiple(keys: List[HeaderKeys]) -> None:
         Removes multiple header keys at once.
-    def _serializeCookieInfo(cookieInfo: Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]) -> str:
+    _serializeCookieInfo(cookieInfo: Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]) -> str:
         Serializes the cookie attributes into a string.
     _deserializeCookieInfo(cookieInfoStr: str) -> Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]:
         Deserializes the string back into a dictionary of cookie attributes.
@@ -243,11 +248,6 @@ class SecureRequests:
         self.certificateVerifyChecksum = certificateVerifyChecksum if certificateVerifyChecksum is not None else config.getCertificateVerifyChecksum()
 
         # ------------------------------------------ Initialize Config Related Variables ------------------------------------------
-        self.headers = self.headerGenerate(headers) or self.headerGenerate()
-        if useEnv:
-            config.EVarSetMode(True)
-            if customEnvVars:
-                config.EVarSet(customEnvVars)
 
         # Initialize attributes, falling back to config if not provided
         self.logToFile = logToFile if logToFile is not None else config.getLogToFile()
@@ -256,6 +256,12 @@ class SecureRequests:
         self.logExtensive = logExtensive if logExtensive is not None else config.getLogExtensive()
         self.silent = silent if silent is not None else config.getSilent()
         self.suppressWarnings = suppressWarnings if suppressWarnings is not None else config.getSuppressWarnings()
+        
+        self.headers = self.headerGenerate(headers)
+        if useEnv:
+            config.EVarSetMode(True)
+            if customEnvVars:
+                config.EVarSet(customEnvVars)
 
         if self.logToFile:
             handler = logging.FileHandler(self.logPath)
@@ -295,7 +301,7 @@ class SecureRequests:
             logFunction = getattr(self.logger, level, None)
             category = f"[{category}]" if category else ""
             if callable(logFunction):
-                logFunction(f"[{timestamp}][{level}]{category} {message}")
+                logFunction(f"[{timestamp}][{level.upper()}]{category} {message}")
 
     # ***********************************************************************************************************************
     # *                                            Certificate Related Stuff                                                *
@@ -336,11 +342,10 @@ class SecureRequests:
         ->> [15.07.2024 12:00:00][INFO][Certificate] Checksum verification successful.
         ->> [15.07.2024 12:00:00][ERROR][Certificate] Failed to obtain expected checksum.
         ->> [15.07.2024 12:00:00][ERROR][Certificate] Failed to fetch certificate. Cannot use SSL but the program might work.
-        ->> [15.07.2024 12:00:00][INFO][Certificate] Certificate exists and setting it to use.
+        ->> [15.07.2024 12:00:00][DEBUG][Certificate] Certificate exists and setting it to use.
         ->> [15.07.2024 12:00:00][CRITICAL][Certificate] Certificate does not exist. Fetching it.
         ->> [15.07.2024 12:00:00][INFO][Certificate] Successfully fetched certificate and saved.
         ->> [15.07.2024 12:00:00][ERROR][Certificate] Fetched certificate is empty.
-        ->> 
         """
 
         """Fetches the checksum of the certificate."""
@@ -352,7 +357,7 @@ class SecureRequests:
                     checksum = response.text.split()
                     if len(checksum) == 2:
                         return checksum[0]
-                    self._logMessage("Unexpected checksum format.", "ERROR", "Certificate")
+                    self._logMessage("Unexpected checksum format.", "error", "Certificate")
             except Exception as e:
                 self._logMessage(f"Exception occurred while fetching checksum: {e}", "error", "Certificate")
             return None
@@ -362,8 +367,8 @@ class SecureRequests:
             sha256Hash = sha256()
             sha256Hash.update(content)
             calculatedHash = sha256Hash.hexdigest()
-            self._logMessage(f"Calculated checksum: {calculatedHash}", "INFO", "Certificate")
-            self._logMessage(f"Expected checksum: {expectedChecksum}", "INFO", "Certificate")
+            self._logMessage(f"Calculated checksum: {calculatedHash}", "info", "Certificate")
+            self._logMessage(f"Expected checksum: {expectedChecksum}", "info", "Certificate")
             return calculatedHash == expectedChecksum
 
 
@@ -385,12 +390,15 @@ class SecureRequests:
                     self._logMessage("Verifying checksum of the fetched certificate.", "info", "Certificate")
                     # Use either the given string if its not a bool or fetch the checksum file
                     expectedChecksum = __fetchChecksum() if isinstance(verifyChecksum, bool) else verifyChecksum
+                    print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
                     if expectedChecksum:
-                        isVerified = __verifyCertificate(content, expectedChecksum)
-                        if not isVerified:
+                        verify = __verifyCertificate(content, expectedChecksum)
+                        if not verify:
+                            print(">>>>>>>>>>>>failed")
                             self._logMessage("Checksum verification failed.", "error", "Certificate")
                             return
                         else:
+                            print(">>>>>>>>>>>worked")
                             self._logMessage("Checksum verification successful.", "info", "Certificate")
                     else:
                         self._logMessage("Failed to obtain expected checksum.", "error", "Certificate")
@@ -403,11 +411,11 @@ class SecureRequests:
                 with open(self.certificatePath, "wb") as f:
                     f.write(content)
 
-                self._logMessage("Successfully fetched certificate and saved.", "INFO", "Certificate")
+                self._logMessage("Successfully fetched certificate and saved.", "info", "Certificate")
                 self.verify = self.certificatePath
         except Exception as e:
             self._logMessage(
-                f"Failed to fetch certificate. Cannot use SSL but the program might work.\n{e}", "CRITICAL", "Certificate"
+                f"Failed to fetch certificate. Cannot use SSL but the program might work.\n{e}", "critical", "Certificate"
             )
             self.verify = False
 
@@ -584,7 +592,6 @@ class SecureRequests:
 
         Example
         -------
-        >>> self._logRequest('GET', 'https://example.com/api/data', response, headers={'Authorization': 'Bearer token'}, params={'key': 'value'})
         ->> [15.07.2024 12:00:00][REQUEST][SAFE][TLS] GET request to https://example.com/api/data ...
         """
         if hasattr(self, "logger"):
@@ -640,6 +647,11 @@ class SecureRequests:
         >>> sr = SecureRequests(headers=customHeaders)
         >>> # Regenerate a needed one works aswell
         >>> headers = secureRequests.headerGenerate(customHeaders=customHeaders)
+
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Added custom headers to the default set.
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Custom headers: {'Content-Type': 'application', ... }
         """
         chromeMajors = list(range(110, 126))
         SecCHUAPlatform = ["Windows", "Macintosh", "X11"]
@@ -676,6 +688,10 @@ class SecureRequests:
         for key, value in customHeaders.items():
             if key not in headers:
                 headers[key] = value
+
+        if self.logExtensive:
+            self._logMessage("Added custom headers to the default set.", "debug", "Header")
+            self._logMessage(f"Custom headers: {headers}", "debug", "Header")
         return headers
     
 
@@ -707,7 +723,7 @@ class SecureRequests:
         self.headers[key.value] = value
         self._logMessage(f"Set {key} to {value}", "debug", "Header")
 
-    def headerRemoveKey(self, key: HeaderKeys) -> None:
+    def headerRemoveKey(self, key:HeaderKeys) -> None:
         """
         Removes a specific header key.
 
@@ -726,12 +742,16 @@ class SecureRequests:
         >>> MyClass.headerRemoveKey(HeaderKeys.AUTHORIZATION)
         >>> print(headers)
         {'Content-Type': 'application/json'}
+
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Removed key AUTHORIZATION from headers.
         """
         if key.value in self.headers:
             del self.headers[key.value]
-            self._logMessage(f"{key} removed from headers.", "debug", "Header")
+            self._logMessage(f"Removed key {key} from headers.", "debug", "Header")
 
-    def headerUpdateMultiple(self, newHeader: Dict[HeaderKeys, str]) -> None:
+    def headerUpdateMultiple(self, newHeader:Dict[HeaderKeys, str]) -> None:
         """
         Updates specific headers based on the provided dictionary.
 
@@ -750,11 +770,16 @@ class SecureRequests:
         >>> MyClass.headerUpdateMultiple({HeaderKeys.AUTHORIZATION: "Bearer token123", HeaderKeys.ACCEPT: "application/xml"})
         >>> print(headers)
         {'Content-Type': 'application/json', 'Authorization': 'Bearer token123', 'Accept': 'application/xml'}
+
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Updated Key 'AUTHORIZATION' with Value 'Value'
         """
         for key, value in newHeader.items():
             self.headers[key.value] = value
+            self._logMessage(f"Updated Key '{key}' with Value '{value}'", "debug", "Header")
 
-    def headerRemoveMultiple(self, keys: List[HeaderKeys]) -> None:
+    def headerRemoveMultiple(self, keys:List[HeaderKeys]) -> None:
         """
         Removes multiple header keys at once.
 
@@ -773,39 +798,53 @@ class SecureRequests:
         >>> MyClass.headerRemoveMultiple([HeaderKeys.AUTHORIZATION, HeaderKeys.ACCEPT])
         >>> print(headers)
         {'Content-Type': 'application/json'}
+
+        Logs
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Removed key AUTHORIZATION from headers.
+        ->> [15.07.2024 12:00:00][DEBUG][Header] Removed key ACCEPT from headers.
         """
         for key in keys:
             if key.value in self.headers:
                 del self.headers[key.value]
+                self._logMessage(f"Removed key {key} from headers.", "debug", "Header")
 
 
     # ***********************************************************************************************************************
     # *                                                 Cookie Related Stuff                                                *
     # ***********************************************************************************************************************
 
-    def _serializeCookieInfo(self, cookieInfo: Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]) -> str:
+    def _serializeCookieInfo(self, cookieInfo:Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]) -> str:
         """
         Serializes the cookie attributes into a string.
 
-        Args:
+        Args
+        ----
             cookieInfo (Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]): 
                 A dictionary containing cookie attributes.
 
-        Returns:
+        Returns
+        -------
             str: A serialized string of cookie attributes.
         """
         return '|'.join(f'{str(key)}={value}' for key, value in cookieInfo.items())
 
-    def _deserializeCookieInfo(self, cookieInfoStr: str) -> Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]:
+    def _deserializeCookieInfo(self, cookieInfoStr:str) -> Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]:
         """
         Deserializes the string back into a dictionary of cookie attributes.
 
-        Args:
+        Args
+        ----
             cookieInfoStr (str): A serialized string of cookie attributes.
 
-        Returns:
+        Returns
+        -------
             Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]: 
                 A dictionary containing cookie attributes.
+
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Cookie] Invalid cookie attribute 'invalid'
+        ->> [15.07.2024 12:00:00][DEBUG][Cookie] Skipping invalid cookie attribute 'invalid'
         """
         items = cookieInfoStr.split('|')
         cookieInfo = {}
@@ -815,57 +854,72 @@ class SecureRequests:
                 try:
                     key = CookieAttributeKeys(key)
                 except ValueError:
-                    pass
+                    self._logMessage(f"Invalid cookie attribute '{item}'", "debug", "Cookie")
                 cookieInfo[key] = value
             else:
-                logging.warning(f"Skipping invalid cookie attribute '{item}'")
+                self._logMessage(f"Skipping invalid cookie attribute '{item}'", "debug", "Cookie")
         return cookieInfo
 
-    def cookieUpdate(self, key: CookieKeys, cookieInfo: Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
+    def cookieUpdate(self, key:CookieKeys, cookieInfo:Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
         """
         Sets or updates a single cookie with specified attributes.
 
-        Args:
-            key (CookieKeys): The key of the cookie to update.
-            cookieInfo (Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]): 
+        Args
+        ----
+        key (CookieKeys): The key of the cookie to update.
+        cookieInfo (Union[str, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]): 
                 The cookie attributes to set or update.
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Cookie] Set cookie 'key' to 'cookieInfo'
         """
         if isinstance(cookieInfo, str):
             cookieInfo = self._deserializeCookieInfo(cookieInfo)
         
         cookieValue = self._serializeCookieInfo(cookieInfo)
         self.session.cookies.set(str(key), cookieValue)
+        self._logMessage(f"Set cookie {key} to {cookieInfo}", "debug", "Cookie")
 
-    def cookieGet(self, key: CookieKeys) -> Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]:
+    def cookieGet(self, key:CookieKeys) -> Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]:
         """
         Retrieves the attributes of a single cookie.
 
-        Args:
+        Args
+        ----
             key (CookieKeys): The key of the cookie to retrieve.
 
-        Returns:
-            Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
-                A dictionary containing the cookie attributes, or None if the cookie does not exist.
+        Returns
+        -------
+        Optional[Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
+            A dictionary containing the cookie attributes, or None if the cookie does not exist.
+        None if none
         """
         cookieValue = self.session.cookies.get(str(key))
         if cookieValue:
             return self._deserializeCookieInfo(cookieValue)
         return None
 
-    def cookieRemove(self, key: CookieKeys) -> None:
+    def cookieRemove(self, key:CookieKeys) -> None:
         """
         Removes a single cookie.
 
-        Args:
+        Args
+        ----
             key (CookieKeys): The key of the cookie to remove.
+
+        Logs
+        ----
+        ->> [15.07.2024 12:00:00][DEBUG][Cookie] Removed cookie 'key'
         """
         self.session.cookies.pop(str(key), None)
+        self._logMessage(f"Removed cookie {key}", "debug", "Cookie")
 
-    def cookieUpdateMultiple(self, cookies: Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
+    def cookieUpdateMultiple(self, cookies:Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]) -> None:
         """
         Adds or updates multiple cookies at once.
 
-        Args:
+        Args
+        ----
             cookies (Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]): 
                 A dictionary containing multiple cookies and their attributes.
         """
@@ -876,9 +930,10 @@ class SecureRequests:
         """
         Retrieves all cookies with their attributes.
 
-        Returns:
-            Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
-                A dictionary containing all cookies and their attributes.
+        Returns
+        -------
+        Dict[CookieKeys, Dict[Union[CookieAttributeKeys, str], Union[str, bool, int, datetime]]]: 
+            A dictionary containing all cookies and their attributes.
         """
         allCookies = {}
         for cookie in self.session.cookies:

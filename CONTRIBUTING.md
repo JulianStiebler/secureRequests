@@ -9,5 +9,8 @@
 
 - everythingIsCamelCase
 - ONLY_GLOBALS_OR_ENUMS_ARE_SNAKE_CASE
+
+## "" or '' 
+
 - "Natural Language Strings"
 - 'data values'
