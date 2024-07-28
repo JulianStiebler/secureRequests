@@ -169,7 +169,7 @@ pip install .
 [Badge License]: https://img.shields.io/github/license/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 
 <!-- Aliases for Files -->
-[MD Security]: ./security.md
+[MD Security]: ./SECURITY.md
 [MD UnitTestResult]: ./unitTest/unitTestResults.md
 [MD Roadmap]: ./ROADMAP.md
 [MD Contributing]: ./CONTRIBUTING.md
