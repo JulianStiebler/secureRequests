@@ -3,7 +3,7 @@ This module provides utilities for making secure HTTP requests using the `reques
 It includes custom transport adapters, certificate management, and header/cookie handling with enums.
 """
 
-from typing import Dict, Any, Optional, List, Union
+from typing import Dict, Any, Optional, List, Union, Callable
 import requests
 import ssl
 import logging
@@ -26,10 +26,10 @@ class SecureRequests:
 
     def __init__(
         self,
-        requests: requests = requests,
-        pathExists: PathExists = PathExists,
-        pathJoin: PathJoin = PathJoin,
-        datetime: datetime = datetime,
+        requests: Any = requests,
+        pathExists: Callable[[str], bool] = PathExists,
+        pathJoin: Callable[..., str] = PathJoin,
+        datetime: Any = datetime,
         useEnv: bool = False,
         customEnvVars: Optional[Dict[str, str]] = None,
         headers: Optional[Dict[str, str]] = None,
@@ -41,8 +41,8 @@ class SecureRequests:
         certificatePath: Optional[str] = None,
         logToFile: Optional[bool] = None,
         logLevel: int = logging.INFO,
-        logPath: str = None,
-        logExtensive: bool = None,
+        logPath: Optional[str] = None,
+        logExtensive: Optional[bool] = None,
         silent: Optional[bool] = None,
         suppressWarnings: Optional[bool] = None,
         session: Optional[requests.Session] = None
