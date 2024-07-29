@@ -5,16 +5,13 @@
 The `secureRequests.py` module is designed to enhance the security of HTTP requests made in Python applications by using TLS (Transport Layer Security) adapters and certificates. It aims to help with best practices for certificates, cookie and header management. 
 Also provides a easy way to verify requests that gather files with checksums.
 
-![Release Version][Badge Release Version]  ![Release Date][Badge Release Date] ![CodeSize][Badge Code Size]
-![Docstring Coverage][Badge Docstring Coverage]
+![Release Version][Badge Release Version] ![Release Date][Badge Release Date] ![Badge Last Commit][Badge Last Commit]
 
-| **Ubuntu** | ![TypeCheck Ubuntu][Badge TypeCheck Ubuntu]              | ![UnitTest Ubuntu][Badge UnitTest Ubuntu]             |
-|------------|----------------------------------------------------------|-------------------------------------------------------|
-| **Mac**    | ![TypeCheck macOS][Badge TypeCheck macOS]                | ![UnitTest macOS][Badge UnitTest macOS]               |
-| **Windows**| ![TypeCheck Windows][Badge TypeCheck Windows]            | ![UnitTest Windows][Badge UnitTest Windows]           |
-| **All**    | ![CodeQL Status][Badge CodeQL]                           | ![Ruff Status][Badge Ruff]                            |
+| ![MyPy][Badge MyPy]               | ![UnitTest][Badge UnitTest]             | ![DocStrCoverage][Badge DocstringCoverage]       |
+|---------------------------------------------|-----------------------------------------| -------------------------------------------------|
+| ![CodeQL Status][Badge CodeQL]              | ![Ruff Status][Badge Ruff]              | ![CodeCoverage][Badge CodeCoverage]              |
 
-![Badge Last Commit][Badge Last Commit] ![Badge Security Policy][Badge Security Policy] ![Badge Open Issues][Badge Open Issues] ![Badge Open Pull Requests][Badge Open Pull Requests] ![Badge Contributors][Badge Contributors]
+![Badge Security Policy][Badge Security Policy] ![Badge Open Issues][Badge Open Issues] ![Badge Open Pull Requests][Badge Open Pull Requests] ![Badge Contributors][Badge Contributors]
 
 ---
 
@@ -144,15 +141,15 @@ pip install .
 [Badge Watchers]: https://img.shields.io/github/watchers/JulianStiebler/secureRequests?style=social
 [Badge Forks]: https://img.shields.io/github/forks/JulianStiebler/secureRequests?style=social
 
-[Badge UnitTest Ubuntu]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=ubuntu-latest&label=UnitTest&logo=ubuntu&logoColor=white&style=for-the-badge
-[Badge UnitTest macOS]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=mac-latest&label=UnitTest&logo=apple&logoColor=white&style=for-the-badge
-[Badge UnitTest Windows]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&os=windows-latest&label=Win%20UnitTest&logo=windows&logoColor=white&style=for-the-badge
-
-[Badge TypeCheck Ubuntu]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=ubuntu-latest&label=TypeCheck&logo=ubuntu&logoColor=white&style=for-the-badge
-[Badge TypeCheck macOS]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=mac-latest&label=TypeCheck&logo=apple&logoColor=white&style=for-the-badge
-[Badge TypeCheck Windows]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&os=windows-latest&label=Win%20TypeCheck&logo=windows&logoColor=white&style=for-the-badge
+[Badge UnitTest]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/unittest.yml?branch=main&label=UnitTest&logo=python&logoColor=white&style=for-the-badge
+[Badge MyPy ]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/typecheck.yml?branch=main&label=TypeCheck&logo=python&logoColor=white&style=for-the-badge
 [Badge CodeQL]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/codeql.yml?branch=main&label=CodeQL&logo=github&logoColor=white&style=for-the-badge
 [Badge Ruff]: https://img.shields.io/github/actions/workflow/status/JulianStiebler/secureRequests/codeql.yml?branch=main&label=Ruff%20Lint&logo=ruff&logoColor=white&style=for-the-badge
+[Badge DocstringCoverage]: https://img.shields.io/badge/DocstrCoverage-100%-blue?style=for-the-badge&logo=star
+[Badge CodeCoverage]: https://img.shields.io/badge/CodeCoverage-Not%20yet-blue?style=for-the-badge&logo=empty
+
+
+
 
 [Badge Release Version]: https://img.shields.io/github/v/release/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 [Badge Release Date]: https://img.shields.io/github/release-date/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
@@ -163,7 +160,6 @@ pip install .
 [Badge Open Issues]: https://img.shields.io/github/issues-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 [Badge Open Pull Requests]: https://img.shields.io/github/issues-pr-raw/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
 [Badge Contributors]: https://img.shields.io/github/contributors/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
-[Badge Docstring Coverage]: https://img.shields.io/badge/docstr%20coverage-90%25-blue?style=for-the-badge&logo=empty
 
 [Badge Downloads]: https://img.shields.io/github/downloads/JulianStiebler/secureRequests/total?style=for-the-badge&logo=empty
 [Badge License]: https://img.shields.io/github/license/JulianStiebler/secureRequests?style=for-the-badge&logo=empty
