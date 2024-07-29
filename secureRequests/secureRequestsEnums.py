@@ -19,7 +19,9 @@ used in web applications.
 from enum import Enum
 
 class Serializer():
+    """Serves as a base class for all enumeration-operations in this module."""
     def __str__(self):
+        """Returns the string representation of the enum value."""
         return self.value
 
 class HeaderKeys(Serializer, Enum):
@@ -354,9 +356,6 @@ class CookieKeys(Serializer, Enum):
     LOGIN_METHOD = "login_method"  # Method used for logging in.
     # More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
 
-    def __str__(self):
-        return self.value
-
 class CookieAttributeKeys(Serializer, Enum):
     """
     This enum holds available enumeration keys for cookie attributes used in HTTP headers.
@@ -394,6 +393,3 @@ class CookieAttributeKeys(Serializer, Enum):
 
     EXTENSION = 'extension'  # Any other extension attributes for the cookie.
     # More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#extension
-
-    def __str__(self):
-        return self.value

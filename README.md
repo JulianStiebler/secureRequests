@@ -120,17 +120,17 @@ pip install .
 # Example Log
 
 ```
-[2024-07-28 02:54:20][CRITICAL][Certificate] Certificate does not exist. Fetching it.
-[2024-07-28 02:54:20][REQUEST][UNSAFE][TLS] GET request to https://curl.se/ca/cacert.pem with Status Code 200 - OK
-[2024-07-28 02:54:20][INFO][Certificate] Verifying checksum of the fetched certificate.
-[2024-07-28 02:54:20][INFO][Certificate] Fetching checksum of the certificate.
-[2024-07-28 02:54:20][REQUEST][UNSAFE][TLS] GET request to https://curl.se/ca/cacert.pem.sha256 with Status Code 200 - OK
-[2024-07-28 02:54:20][INFO][Certificate] Calculated checksum: 1bf458412568e134a4514f5e170a328d11091e071c7110955c9884ed87972ac9
-[2024-07-28 02:54:20][INFO][Certificate] Expected checksum: 1bf458412568e134a4514f5e170a328d11091e071c7110955c9884ed87972ac9
-[2024-07-28 02:54:20][INFO][Certificate] Checksum verification successful.
-[2024-07-28 02:54:20][INFO][Certificate] Successfully fetched certificate and saved.
-[2024-07-28 02:54:20][DEBUG][Certificate] Setting certificate. Status: /resources/cacert.pem
-[2024-07-28 02:54:22][REQUEST][SAFE][TLS] GET request to https://api.github.com/repos/julianstiebler/secureRequests/releases/latest with Status Code 200 - OK
+[2024-07-29 17:12:23][CRITICAL][Certificate] Certificate does not exist. Fetching it.
+[2024-07-29 17:12:23][REQUEST][UNSAFE][TLS] GET request to [REDACTED URL] with Status Code 200 - OK
+[2024-07-29 17:12:23][INFO][Certificate] Verifying checksum of the fetched certificate.
+[2024-07-29 17:12:23][INFO][Certificate] Fetching checksum of the certificate.
+[2024-07-29 17:12:23][REQUEST][UNSAFE][TLS] GET request to [REDACTED URL] with Status Code 200 - OK
+[2024-07-29 17:12:23][INFO][Certificate] Calculated checksum: 1bf458412568e134a4514f5e170a328d11091e071c7110955c9884ed87972ac9
+[2024-07-29 17:12:23][INFO][Certificate] Expected checksum: 1bf458412568e134a4514f5e170a328d11091e071c7110955c9884ed87972ac9
+[2024-07-29 17:12:23][INFO][Certificate] Checksum verification successful.
+[2024-07-29 17:12:23][INFO][Certificate] Successfully fetched certificate and saved.
+[2024-07-29 17:12:23][DEBUG][Certificate] Setting certificate. Status: resources/cacert.pem
+[2024-07-29 17:12:25][REQUEST][SAFE][TLS] GET request to https://api.github.com/repos/julianstiebler/secureRequests/releases/latest with Status Code 200 - OK
 ```
 
 # Acknowledgments

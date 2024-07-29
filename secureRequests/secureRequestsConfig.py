@@ -1,7 +1,7 @@
 """
-This module provides the `Config` class for managing configuration settings for secure requests. 
+This module provides the `Config` class for managing configuration settings for secure requests.
 
-The `Config` class allows for both direct configuration and environment variable-based configuration. 
+The `Config` class allows for both direct configuration and environment variable-based configuration.
 It includes settings for:
 - Enabling or disabling TLS
 - Marking requests as unsafe
@@ -29,9 +29,11 @@ Example:
 # Created: 15.07.2024
 # Last edited: 17.07.2024
 """
+
 import os
 import logging
 from typing import Dict, Union
+
 
 class Config:
     """
@@ -69,6 +71,7 @@ class Config:
         getSuppressWarnings: Get the suppressWarnings configuration.
         getCertificateVerifyChecksum: Get the certificateVerifyChecksum configuration.
     """
+
     def __init__(self) -> None:
         """
         Initializes the configuration settings with default values or environment variables.
@@ -92,32 +95,73 @@ class Config:
         """
         self.useEVar: bool = False  # Default mode is direct configuration
         self.envVars: Dict[str, str] = {
-            'useTLS': 'SECURE_REQUESTS_USE_TLS',
-            'unsafe': 'SECURE_REQUESTS_UNSAFE',
-            'certificateNeedFetch': 'SECURE_REQUESTS_CERTIFICATE_NEED_FETCH',
-            'certificateURL': 'SECURE_REQUESTS_CERTIFICATE_URL',
-            'certificatePath': 'SECURE_REQUESTS_CERTIFICATE_PATH',
-            'certificateVerifyChecksum': 'SECURE_REQUESTS_CERTIFICATE_VERIFY_CHECKSUM',
-            'logToFile': 'SECURE_REQUESTS_LOG_TO_FILE',
-            'logLevel': 'SECURE_REQUESTS_LOG_LEVEL',
-            'logPath': 'SECURE_REQUESTS_LOG_PATH',
-            'logExtensive': 'SECURE_REQUESTS_LOGEXTENSIVE',
-            'silent': 'SECURE_REQUESTS_SILENT',
-            'suppressWarnings': 'SECURE_REQUESTS_SUPPRESS_WARNINGS',
+            "useTLS": "SECURE_REQUESTS_USE_TLS",
+            "unsafe": "SECURE_REQUESTS_UNSAFE",
+            "certificateNeedFetch": "SECURE_REQUESTS_CERTIFICATE_NEED_FETCH",
+            "certificateURL": "SECURE_REQUESTS_CERTIFICATE_URL",
+            "certificatePath": "SECURE_REQUESTS_CERTIFICATE_PATH",
+            "certificateVerifyChecksum": "SECURE_REQUESTS_CERTIFICATE_VERIFY_CHECKSUM",
+            "logToFile": "SECURE_REQUESTS_LOG_TO_FILE",
+            "logLevel": "SECURE_REQUESTS_LOG_LEVEL",
+            "logPath": "SECURE_REQUESTS_LOG_PATH",
+            "logExtensive": "SECURE_REQUESTS_LOGEXTENSIVE",
+            "silent": "SECURE_REQUESTS_SILENT",
+            "suppressWarnings": "SECURE_REQUESTS_SUPPRESS_WARNINGS",
         }
 
-        self.useTLS: bool = True if not self.useEVar else self.__getEnvBool('useTLS', True)
-        self.unsafe: bool = False if not self.useEVar else self.__getEnvBool('unsafe', False)
-        self.certificateNeedFetch: bool = True if not self.useEVar else self.__getEnvBool('certificateNeedFetch', True)
-        self.certificateURL: str = "https://curl.se/ca/cacert.pem" if not self.useEVar else os.getenv(self.envVars['certificateURL'], "https://curl.se/ca/cacert.pem")
-        self.certificatePath: str = "cacert.pem" if not self.useEVar else os.getenv(self.envVars['certificatePath'], "cacert.pem")
-        self.certificateVerifyChecksum: bool = False if not self.useEVar else self.__getEnvBool('certificateVerifyChecksum', False)
-        self.logToFile: bool = False if not self.useEVar else self.__getEnvBool('logToFile', False)
-        self.logLevel: Union[int, str] = logging.DEBUG if not self.useEVar else os.getenv(self.envVars['logLevel'], logging.DEBUG)
-        self.logPath: str = "secureRequests.log" if not self.useEVar else os.getenv(self.envVars['logPath'], "secureRequests.log")
-        self.logExtensive: bool = False if not self.useEVar else self.__getEnvBool('logExtensive', False)
-        self.silent: bool = False if not self.useEVar else self.__getEnvBool('silent', False)
-        self.suppressWarnings: bool = False if not self.useEVar else self.__getEnvBool('suppressWarnings', False)
+        self.useTLS: bool = (
+            True if not self.useEVar else self.__getEnvBool("useTLS", True)
+        )
+        self.unsafe: bool = (
+            False if not self.useEVar else self.__getEnvBool("unsafe", False)
+        )
+        self.certificateNeedFetch: bool = (
+            True
+            if not self.useEVar
+            else self.__getEnvBool("certificateNeedFetch", True)
+        )
+        self.certificateURL: str = (
+            "https://curl.se/ca/cacert.pem"
+            if not self.useEVar
+            else os.getenv(
+                self.envVars["certificateURL"], "https://curl.se/ca/cacert.pem"
+            )
+        )
+        self.certificatePath: str = (
+            "cacert.pem"
+            if not self.useEVar
+            else os.getenv(self.envVars["certificatePath"], "cacert.pem")
+        )
+        self.certificateVerifyChecksum: bool = (
+            False
+            if not self.useEVar
+            else self.__getEnvBool("certificateVerifyChecksum", False)
+        )
+        self.logToFile: bool = (
+            False if not self.useEVar else self.__getEnvBool("logToFile", False)
+        )
+        self.logLevel: Union[int, str] = (
+            logging.DEBUG
+            if not self.useEVar
+            else os.getenv(self.envVars["logLevel"], logging.DEBUG)
+        )
+        self.logPath: str = (
+            "secureRequests.log"
+            if not self.useEVar
+            else os.getenv(self.envVars["logPath"], "secureRequests.log")
+        )
+        self.logExtensive: bool = (
+            False if not self.useEVar else self.__getEnvBool("logExtensive", False)
+        )
+        self.silent: bool = (
+            False if not self.useEVar else self.__getEnvBool("silent", False)
+        )
+        self.suppressWarnings: bool = (
+            False if not self.useEVar else self.__getEnvBool("suppressWarnings", False)
+        )
+        self.certificateRedactURL: bool = (
+            True if not self.useEVar else self.__getEnvBool("certificateRedactURL", True)
+        )
 
     def __getEnvBool(self, key: str, default: bool) -> bool:
         """
@@ -141,34 +185,115 @@ class Config:
         env_value = os.getenv(env_key)
         if env_value is None:
             return default
-        return env_value.lower() in ('true', '1', 't', 'y', 'yes')
-    
+        return env_value.lower() in ("true", "1", "t", "y", "yes")
+
         # Setter methods for direct configuration
-    def setUseTLS(self, value: bool): self.useTLS = value
-    def setUnsafe(self, value: bool): self.unsafe = value
-    def setCertificateNeedFetch(self, value: bool): self.certificateNeedFetch = value
-    def setCertificateURL(self, value: str): self.certificateURL = value
-    def setCertificatePath(self, value: str): self.certificatePath = value
-    def setLogToFile(self, value: bool): self.logToFile = value
-    def setLogLevel(self, value: Union[int, str]): self.logLevel = value
-    def setLogPath(self, value: str): self.logPath = value
-    def setLogExtensive(self, value: bool): self.logExtensive = value
-    def setSilent(self, value: bool): self.silent = value
-    def setSuppressWarnings(self, value: bool): self.suppressWarnings = value
-    def setCertificateVerifyChecksum(self, value: bool): self.certificateVerifyChecksum = value
+
+    def setUseTLS(self, value: bool):
+        """Specifies if TLS should be used for requests."""
+        self.useTLS = value
+
+    def setUnsafe(self, value: bool):
+        """Specifies if requests should be using the certificate."""
+        self.unsafe = value
+
+    def setCertificateNeedFetch(self, value: bool):
+        """Specifies if the certificate should be fetched."""
+        self.certificateNeedFetch = value
+
+    def setCertificateURL(self, value: str):
+        """Specifies the URL from which the certificate should be fetched."""
+        self.certificateURL = value
+
+    def setCertificatePath(self, value: str):
+        """Specifies the path where the certificate should be stored."""
+        self.certificatePath = value
+
+    def setCertificateVerifyChecksum(self, value: bool):
+        """Specifies if the certificate checksum should be verified."""
+        self.certificateVerifyChecksum = value
+
+    def setCeritificateRedactURL(self, value: bool):
+        """Specifies if the certificate URL should be redacted in logs."""
+        self.certificateRedactURL = value
+
+    def setLogToFile(self, value: bool):
+        """Specifies if logs should be written to a file."""
+        self.logToFile = value
+
+    def setLogLevel(self, value: Union[int, str]):
+        """Specifies the log level for the logger."""
+        self.logLevel = value
+
+    def setLogPath(self, value: str):
+        """Specifies the path where logs should be stored."""
+        self.logPath = value
+
+    def setLogExtensive(self, value: bool):
+        """Specifies if extensive logs should be written."""
+        self.logExtensive = value
+
+    def setSilent(self, value: bool):
+        """Specifies if logs should be suppressed."""
+        self.silent = value
+
+    def setSuppressWarnings(self, value: bool):
+        """Specifies if warnings should be suppressed."""
+        self.suppressWarnings = value
+
+    # -----------------------------------------------------------------------------------------------
 
     # Getter methods
-    def getUseTLS(self) -> bool: return self.useTLS
-    def getUnsafe(self) -> bool: return self.unsafe
-    def getCertificateNeedFetch(self) -> bool: return self.certificateNeedFetch
-    def getCertificateURL(self) -> str: return self.certificateURL
-    def getCertificatePath(self) -> str: return self.certificatePath
-    def getLogToFile(self) -> bool: return self.logToFile
-    def getLogLevel(self) -> Union[int, str]: return self.logLevel
-    def getLogPath(self) -> str: return self.logPath
-    def getLogExtensive(self) -> bool: return self.logExtensive
-    def getSilent(self) -> bool: return self.silent
-    def getSuppressWarnings(self) -> bool: return self.suppressWarnings
-    def getCertificateVerifyChecksum(self) -> bool: return self.certificateVerifyChecksum
+    def getUseTLS(self) -> bool:
+        """Returns the current value of the useTLS configuration."""
+        return self.useTLS
+
+    def getUnsafe(self) -> bool:
+        """Returns the current value of the unsafe configuration."""
+        return self.unsafe
+
+    def getCertificateNeedFetch(self) -> bool:
+        """Returns the current value of the certificateNeedFetch configuration."""
+        return self.certificateNeedFetch
+
+    def getCertificateURL(self) -> str:
+        """Returns the current value of the certificateURL configuration."""
+        return self.certificateURL
+
+    def getCertificatePath(self) -> str:
+        """Returns the current value of the certificatePath configuration."""
+        return self.certificatePath
+
+    def getCertificateVerifyChecksum(self) -> bool:
+        """Returns the current value of the certificateVerifyChecksum configuration."""
+        return self.certificateVerifyChecksum
+    
+    def getCertificateRedactURL(self) -> bool:
+        """Returns the current value of the certificateRedactURL configuration."""
+        return self.certificateRedactURL
+
+    def getLogToFile(self) -> bool:
+        """Returns the current value of the logToFile configuration."""
+        return self.logToFile
+
+    def getLogLevel(self) -> Union[int, str]:
+        """Returns the current value of the logLevel configuration."""
+        return self.logLevel
+
+    def getLogPath(self) -> str:
+        """Returns the current value of the logPath configuration."""
+        return self.logPath
+
+    def getLogExtensive(self) -> bool:
+        """Returns the current value of the logExtensive configuration."""
+        return self.logExtensive
+
+    def getSilent(self) -> bool:
+        """Returns the current value of the silent configuration."""
+        return self.silent
+
+    def getSuppressWarnings(self) -> bool:
+        """Returns the current value of the suppressWarnings configuration."""
+        return self.suppressWarnings
 
 config = Config()

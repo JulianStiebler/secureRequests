@@ -5,3 +5,4 @@
 cacert.pem
 *.pyc
 unitTest/unitTest.log
+/.testing

@@ -48,28 +48,28 @@
  > unsafe: False
  > useTLS: True
 
-[2024-07-28 03:40:09][REQUEST][SAFE][TLS] GET request to https://httpbin.org/get with Status Code 200 - OK
+[2024-07-29 15:52:07][REQUEST][SAFE][TLS] GET request to https://httpbin.org/get with Status Code 200 - OK
 [PASS][SAFE][USE TLS] GET request to https://httpbin.org/get with status code 200.
-[2024-07-28 03:40:10][REQUEST][SAFE][TLS] POST request to https://httpbin.org/post with Status Code 200 - OK
+[2024-07-29 15:52:07][REQUEST][SAFE][TLS] POST request to https://httpbin.org/post with Status Code 200 - OK
 [PASS][SAFE][USE TLS] POST request to https://httpbin.org/post with status code 200.
-[2024-07-28 03:40:10][REQUEST][SAFE][TLS] PUT request to https://httpbin.org/put with Status Code 200 - OK
+[2024-07-29 15:52:07][REQUEST][SAFE][TLS] PUT request to https://httpbin.org/put with Status Code 200 - OK
 [PASS][SAFE][USE TLS] PUT request to https://httpbin.org/put with status code 200.
-[2024-07-28 03:40:10][REQUEST][SAFE][TLS] DELETE request to https://httpbin.org/delete with Status Code 200 - OK
+[2024-07-29 15:52:08][REQUEST][SAFE][TLS] DELETE request to https://httpbin.org/delete with Status Code 200 - OK
 [PASS][SAFE][USE TLS] DELETE request to https://httpbin.org/delete with status code 200.
-[2024-07-28 03:40:10][REQUEST][SAFE][TLS] PATCH request to https://httpbin.org/patch with Status Code 200 - OK
+[2024-07-29 15:52:08][REQUEST][SAFE][TLS] PATCH request to https://httpbin.org/patch with Status Code 200 - OK
 [PASS][SAFE][USE TLS] PATCH request to https://httpbin.org/patch with status code 200.
 
 - Used Cookies: No cookies used..
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="124", "Chromium";v="124", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="111", "Chromium";v="111", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (X11; Ubuntu; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36
 
 ------------------------------------------------------------
 >>> Testing HTTP Methods with Config <<<
@@ -77,28 +77,28 @@
  > unsafe: True
  > useTLS: False
 
-[2024-07-28 03:40:10][REQUEST][UNSAFE][NO TLS] GET request to https://httpbin.org/get with Status Code 200 - OK
+[2024-07-29 15:52:09][REQUEST][UNSAFE][NO TLS] GET request to https://httpbin.org/get with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] GET request to https://httpbin.org/get with status code 200.
-[2024-07-28 03:40:11][REQUEST][UNSAFE][NO TLS] POST request to https://httpbin.org/post with Status Code 200 - OK
+[2024-07-29 15:52:09][REQUEST][UNSAFE][NO TLS] POST request to https://httpbin.org/post with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] POST request to https://httpbin.org/post with status code 200.
-[2024-07-28 03:40:11][REQUEST][UNSAFE][NO TLS] PUT request to https://httpbin.org/put with Status Code 200 - OK
+[2024-07-29 15:52:09][REQUEST][UNSAFE][NO TLS] PUT request to https://httpbin.org/put with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] PUT request to https://httpbin.org/put with status code 200.
-[2024-07-28 03:40:11][REQUEST][UNSAFE][NO TLS] DELETE request to https://httpbin.org/delete with Status Code 200 - OK
+[2024-07-29 15:52:09][REQUEST][UNSAFE][NO TLS] DELETE request to https://httpbin.org/delete with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] DELETE request to https://httpbin.org/delete with status code 200.
-[2024-07-28 03:40:11][REQUEST][UNSAFE][NO TLS] PATCH request to https://httpbin.org/patch with Status Code 200 - OK
+[2024-07-29 15:52:12][REQUEST][UNSAFE][NO TLS] PATCH request to https://httpbin.org/patch with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] PATCH request to https://httpbin.org/patch with status code 200.
 
 - Used Cookies: No cookies used..
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="123", "Chromium";v="123", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
- > Sec-Ch-Ua-Platform: "Windows"
+ > Sec-Ch-Ua-Platform: "X11"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
 
 
 ```
@@ -138,7 +138,7 @@
  > unsafe: False
  > useTLS: True
 
-[2024-07-28 03:40:12][REQUEST][SAFE][TLS] GET request to https://postman-echo.com/basic-auth with Status Code 200 - OK
+[2024-07-29 15:52:13][REQUEST][SAFE][TLS] GET request to https://postman-echo.com/basic-auth with Status Code 200 - OK
 [PASS][SAFE][USE TLS] Request to https://postman-echo.com/basic-auth with status code 200.
 ------------------------------------------------------------
 >>> Testing Basic Auth with Config <<<
@@ -146,20 +146,20 @@
  > unsafe: True
  > useTLS: False
 
-[2024-07-28 03:40:13][REQUEST][UNSAFE][NO TLS] GET request to https://postman-echo.com/basic-auth with Status Code 200 - OK
+[2024-07-29 15:52:13][REQUEST][UNSAFE][NO TLS] GET request to https://postman-echo.com/basic-auth with Status Code 200 - OK
 [PASS][UNSAFE][NO TLS] Request to https://postman-echo.com/basic-auth with status code 200.
 
 - Used Cookies: None.
 - Used Header:
  > Accept: application/x-www-form-urlencoded
  > Content-Type: application/x-www-form-urlencoded
- > Sec-Ch-Ua: "Google Chrome";v="122", "Chromium";v="122", "Not.A/Brand";v="24"
+ > Sec-Ch-Ua: "Google Chrome";v="123", "Chromium";v="123", "Not.A/Brand";v="24"
  > Sec-Ch-Ua-Mobile: ?0
  > Sec-Ch-Ua-Platform: "Windows"
  > Sec-Fetch-Dest: empty
  > Sec-Fetch-Mode: cors
  > Sec-Fetch-Site: same-site
- > User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36
+ > User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36
  > Authorization: Basic cG9zdG1hbjpwYXNzd29yZA==
 
 

@@ -171,6 +171,10 @@ class SecureRequests:
     _certificateFetch(self, force:bool=False, verifyChecksum:Union[bool, str]=False) -> None:
         Fetches the SSL certificate if required. 
         Optionally verifies the checksum of the fetched certificate, given a string - or if True, fetches the checksum file from curl.se.
+        __fetchChecksum() -> str:
+            Fetches the checksum of the certificate.
+        __verifyCertificate(content:Any, expectedChecksum:str) -> bool:
+            Verifies the checksum of the fetched certificate.
     makeRequest(url:str, method:str = "GET", headers:Optional[Dict[str, str]] = None, **kwargs) -> requests.Response:
         Makes an HTTP request with the specified parameters.
     _logRequest(method:str, url:str, response:requests.Response, **kwargs:Any) -> None:
@@ -217,6 +221,7 @@ class SecureRequests:
             certificateVerifyChecksum: Optional[Union[bool, str]] = None,
             certificateURL: Optional[str] = None,
             certificatePath: Optional[str] = None,
+            certificateRedactURL: Optional[bool] = None,
             logToFile: Optional[bool] = None,
             logLevel: int = logging.INFO,
             logPath: str = None,
@@ -224,6 +229,7 @@ class SecureRequests:
             silent: Optional[bool] = None,
             suppressWarnings: Optional[bool] = None,
             session: requests.Session = None) -> None:
+        
         """
         Initializes the SecureRequests object with the specified parameters and defaults to the configuration settings from the config module.
         """
@@ -246,6 +252,7 @@ class SecureRequests:
         self.certificateURL = certificateURL if certificateURL else config.getCertificateURL()
         self.certificatePath = certificatePath if certificatePath else config.getCertificatePath()
         self.certificateVerifyChecksum = certificateVerifyChecksum if certificateVerifyChecksum is not None else config.getCertificateVerifyChecksum()
+        self.certificateRedactURL = certificateRedactURL if certificateRedactURL else config.getCertificateRedactURL()
 
         # ------------------------------------------ Initialize Config Related Variables ------------------------------------------
 
@@ -280,6 +287,11 @@ class SecureRequests:
             self._certificateFetch(verifyChecksum=self.certificateVerifyChecksum)
         self.verify = self._certificateSet()
 
+    # ***********************************************************************************************************************
+    # *                                              Logging Related Stuff                                                  *
+    # ***********************************************************************************************************************
+
+
     def _logMessage(self, message:str, level:Union[str, int]="DEBUG", category:str = ""):
         """
         Logs a message using the instance's logger at the specified logging level.
@@ -302,6 +314,43 @@ class SecureRequests:
             category = f"[{category}]" if category else ""
             if callable(logFunction):
                 logFunction(f"[{timestamp}][{level.upper()}]{category} {message}")
+
+    def _logRequest(self, method:str, url:str, response:requests.Response, redactURL:bool=False, **kwargs:Any) -> None:
+        """
+        Logs the details of the HTTP request if logging is enabled.
+
+        Parameters
+        ----------
+        method : str
+            The HTTP method used for the request (e.g., 'GET', 'POST').
+        url : str
+            The URL of the request.
+        response : requests.Response
+            The HTTP response object.
+        kwargs : Any
+            Additional keyword arguments passed to the request, such as headers or parameters.
+
+        Returns
+        -------
+        None
+            This method does not return any value.
+
+        Example
+        -------
+        ->> [15.07.2024 12:00:00][REQUEST][SAFE][TLS] GET request to https://example.com/api/data ...
+        """
+        if hasattr(self, "logger"):
+            url = url if not redactURL else "[REDACTED URL]"
+            timestamp = self.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            safetyStatus = "[UNSAFE]" if not self.verify else "[SAFE]"
+            tlsStatus = "[TLS]" if self.useTLS else "[NO TLS]"
+            logExtra = f' with headers {kwargs.get("headers")} and params {kwargs}' if self.logExtensive else ''
+            logDefaults = f' with Status Code {response.status_code} - {response.reason}'
+            logBase = f'[{timestamp}][REQUEST]{safetyStatus}{tlsStatus} {method} request to {url}{logExtra}{logDefaults}'
+            if response.status_code == 200:
+                self.logger.info(logBase)
+            else:
+                self.logger.error(logBase)
 
     # ***********************************************************************************************************************
     # *                                            Certificate Related Stuff                                                *
@@ -327,9 +376,25 @@ class SecureRequests:
         __verifyCertificate(content:Any, expectedChecksum:str) -> bool:
             Verifies the checksum of the fetched certificate.
 
-        Returns
-        -------
-        None
+        Logic
+        -----
+        If the certificate exists and not in unsafe mode, set it to use.
+            If force is False, return if the certificate exists already.
+            If force is True, fetch the certificate anyway.
+        If the certificate does not exist:
+            If in unsafe mode, return and do not fetch the certificate.
+            If not in unsafe mode, fetch the certificate.
+                If verifyChecksum is True, verify the checksum of the fetched certificate.
+                If verifyChecksum is a string, use it as the expected checksum.
+                If verifyChecksum is False, do not verify the checksum.
+                If the content is empty, log an error message and return.
+                If everything checked out:
+                    Save the certificate to the file system.
+
+        Sets
+        ----
+        self.verify : Union[bool, str]
+            The path to the SSL certificate file or False if not using SSL.
 
         Logs
         ----
@@ -348,11 +413,24 @@ class SecureRequests:
         ->> [15.07.2024 12:00:00][ERROR][Certificate] Fetched certificate is empty.
         """
 
-        """Fetches the checksum of the certificate."""
         def __fetchChecksum():
+            """
+            Fetches the checksum of the certificate.
+            
+            Returns
+            -------
+            str: The checksum of the certificate. | None if the checksum is not found or in an unexpected format.
+
+            Logs
+            ----
+            ->> [15.07.2024 12:00:00][INFO][Certificate] Fetching checksum of the certificate.
+            ->> [15.07.2024 12:00:00][ERROR][Certificate] Unexpected checksum format.
+            ->> [15.07.2024 12:00:00][ERROR][Certificate] Exception occurred while fetching checksum: Exception
+
+            """
             try:
                 self._logMessage("Fetching checksum of the certificate.", "info", "Certificate")
-                response = self.makeRequest('https://curl.se/ca/cacert.pem.sha256')
+                response = self.makeRequest('https://curl.se/ca/cacert.pem.sha256', redactURL=self.certificateRedactURL)
                 if response.status_code == 200:
                     checksum = response.text.split()
                     if len(checksum) == 2:
@@ -362,8 +440,19 @@ class SecureRequests:
                 self._logMessage(f"Exception occurred while fetching checksum: {e}", "error", "Certificate")
             return None
 
-        """Verifies the checksum of the fetched certificate."""
         def __verifyCertificate(content:Any, expectedChecksum:str) -> bool:
+            """
+            Verifies the checksum of the fetched certificate.
+
+            Returns
+            -------
+            bool: True if the checksum is verified, False otherwise.
+
+            Logs
+            ----
+            ->> [15.07.2024 12:00:00][INFO][Certificate] Calculated checksum: 1234567890
+            ->> [15.07.2024 12:00:00][INFO][Certificate] Expected checksum: 1234567890
+            """
             sha256Hash = sha256()
             sha256Hash.update(content)
             calculatedHash = sha256Hash.hexdigest()
@@ -371,21 +460,25 @@ class SecureRequests:
             self._logMessage(f"Expected checksum: {expectedChecksum}", "info", "Certificate")
             return calculatedHash == expectedChecksum
 
-
-        if self.pathExists(self.certificatePath):
+        if self.pathExists(self.certificatePath) and not self.unsafe:
             self.verify = self.certificatePath
             self._logMessage("Certificate exists and setting it to use.", "debug", "Certificate")
             if not force:
                 return
+        # If the certificate does not exist
         else:
-            self._logMessage("Certificate does not exist. Fetching it.", "critical", "Certificate")
+            # Log a message if not in unsafe mode
+            if not self.unsafe:
+                self._logMessage("Certificate does not exist. Fetching it.", "critical", "Certificate")
+            # If in unsafe mode, return and not fetch certificate
+            else:
+                return
 
+        # Fetch the certificate, verify the checksum if required, if content is not empty and save it
         try:
-            response = self.makeRequest(self.certificateURL, method="GET")
+            response = self.makeRequest(self.certificateURL, method="GET", redactURL=self.certificateRedactURL)
             if response.status_code == 200:
                 content = response.content
-                # If checksum verification is enabled, fetch the checksum and verify it
-                # If its a string or True
                 if verifyChecksum:
                     self._logMessage("Verifying checksum of the fetched certificate.", "info", "Certificate")
                     # Use either the given string if its not a bool or fetch the checksum file
@@ -394,11 +487,9 @@ class SecureRequests:
                     if expectedChecksum:
                         verify = __verifyCertificate(content, expectedChecksum)
                         if not verify:
-                            print(">>>>>>>>>>>>failed")
                             self._logMessage("Checksum verification failed.", "error", "Certificate")
                             return
                         else:
-                            print(">>>>>>>>>>>worked")
                             self._logMessage("Checksum verification successful.", "info", "Certificate")
                     else:
                         self._logMessage("Failed to obtain expected checksum.", "error", "Certificate")
@@ -421,7 +512,8 @@ class SecureRequests:
 
     def _certificateSet(self) -> Union[bool, str]:
         """
-        Sets the certificate path if not in unsafe mode and the certificate file exists.
+        Helper function if something goes wrong with the certificate fetching, 
+        or it is disabled but a certificate exists.
 
         Returns
         -------
@@ -568,44 +660,8 @@ class SecureRequests:
         response = srMethods[method](
             url=url, headers=headers, verify=self.verify, **kwargs
         )
-        self._logRequest(method, url, response=response, headers=headers)
+        self._logRequest(method, url, response=response, redactURL=redactURL, headers=headers)
         return response
-
-    def _logRequest(self, method:str, url:str, response:requests.Response, **kwargs:Any) -> None:
-        """
-        Logs the details of the HTTP request if logging is enabled.
-
-        Parameters
-        ----------
-        method : str
-            The HTTP method used for the request (e.g., 'GET', 'POST').
-        url : str
-            The URL of the request.
-        response : requests.Response
-            The HTTP response object.
-        kwargs : Any
-            Additional keyword arguments passed to the request, such as headers or parameters.
-
-        Returns
-        -------
-        None
-            This method does not return any value.
-
-        Example
-        -------
-        ->> [15.07.2024 12:00:00][REQUEST][SAFE][TLS] GET request to https://example.com/api/data ...
-        """
-        if hasattr(self, "logger"):
-            timestamp = self.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            safetyStatus = "[UNSAFE]" if not self.verify else "[SAFE]"
-            tlsStatus = "[TLS]" if self.useTLS else "[NO TLS]"
-            logExtra = f' with headers {kwargs.get("headers")} and params {kwargs}' if self.logExtensive else ''
-            logDefaults = f' with Status Code {response.status_code} - {response.reason}'
-            logBase = f'[{timestamp}][REQUEST]{safetyStatus}{tlsStatus} {method} request to {url}{logExtra}{logDefaults}'
-            if response.status_code == 200:
-                self.logger.info(logBase)
-            else:
-                self.logger.error(logBase)
 
     # ***********************************************************************************************************************
     # *                                                 Header Related Stuff                                                *
